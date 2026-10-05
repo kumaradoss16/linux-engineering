@@ -1,4 +1,4 @@
-# Topic 03 — How Linux Works
+# Topic 03 - How Linux Works
 
 ## 1. Introduction
 
@@ -1164,4 +1164,4 @@ You should now understand:
 
 ## 22. Next Topic
 
-**Topic 04 — Linux Boot Process**
+**Topic 04 - Linux Boot Process**
