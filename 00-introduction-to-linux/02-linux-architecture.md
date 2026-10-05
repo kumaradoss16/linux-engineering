@@ -98,6 +98,8 @@ Linux kernel
   v
 Hardware or system resource
 ```
+<img width="324" height="404" alt="image" src="https://github.com/user-attachments/assets/5348bc8a-6105-4471-96b1-09c22c4d54c4" />
+
 
 ## 4. Hardware Layer
 
