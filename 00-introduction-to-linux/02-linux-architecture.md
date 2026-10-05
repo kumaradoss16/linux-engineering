@@ -6,6 +6,1024 @@ Linux architecture describes how users, applications, system software, the Linux
 
 A Linux system is not one single program. It is a collection of layers with different responsibilities:
 
+- Users interact with applications.
+- Applications run in user space.
+- Libraries provide programming interfaces.
+- System calls cross the boundary into the kernel.
+- The Linux kernel manages resources and hardware.
+- Device drivers connect kernel functions to specific devices.
+
+Understanding these relationships helps explain what happens when a program reads a file, uses memory, sends network data, or communicates with hardware.
+
+This topic remains conceptual. It does not teach Linux commands, kernel programming, or detailed administration.
+
+## 2. Learning Objectives
+
+After completing this topic, you should be able to:
+
+- Describe the major layers of Linux architecture.
+- Distinguish hardware, kernel space, user space, and applications.
+- Explain the role of the Linux kernel.
+- Identify major kernel subsystems.
+- Explain what system calls are.
+- Explain how system libraries relate to system calls.
+- Describe the role of system services and daemons.
+- Explain why applications normally do not access hardware directly.
+- Describe the purpose of device drivers.
+- Explain the difference between user space and kernel space.
+- Describe how an application request travels through a Linux system.
+- Connect the architecture to real server and infrastructure environments.
+
+## 3. Linux Architecture at a Glance
+
+The following diagram shows the main relationships:
+
+```text
++-----------------------------+
+|           Users             |
++-----------------------------+
+              |
++-----------------------------+
+|       Applications          |
++-----------------------------+
+              |
++-----------------------------+
+| Shell / User Interfaces     |
++-----------------------------+
+              |
++-----------------------------+
+| System Libraries / APIs     |
++-----------------------------+
+              |
++-----------------------------+
+|       System Calls          |
++-----------------------------+
+              |
++-----------------------------+
+|        Linux Kernel         |
+|                             |
+| Process Management          |
+| Memory Management           |
+| File Systems                |
+| Networking                  |
+| Device Drivers              |
+| Security                    |
++-----------------------------+
+              |
++-----------------------------+
+|          Hardware           |
++-----------------------------+
+```
+
+In the DEVSPIRE website theme, the visual treatment should communicate these meanings:
+
+- **Users:** Orange, representing human interaction.
+- **Applications and user-space software:** Blue, representing software that runs outside the kernel.
+- **System libraries and system calls:** Purple, representing software interfaces and abstraction boundaries.
+- **Linux kernel:** Navy, representing privileged kernel-space functions.
+- **Hardware:** Slate, representing physical or virtual resources.
+- **Networking:** Teal, used only for network-related components.
+- **Storage:** Amber, used only for storage and filesystem-related components.
+- **Security boundaries:** Red, used sparingly for privilege and security concerns.
+
+Color should reinforce the labels and structure, not replace them. The diagram must remain understandable when printed in grayscale or viewed by a learner with color-vision differences.
+
+## 4. The Main Architecture Layers
+
+### Users
+
+Users are people or automated systems that interact with a Linux environment.
+
+A user may interact with Linux through:
+
+- A graphical interface.
+- A shell.
+- A remote administration system.
+- An application interface.
+- An automated deployment process.
+
+Users do not normally communicate directly with hardware. They interact with applications or system interfaces that request services from the operating system.
+
+### Applications
+
+Applications perform useful work.
+
+Examples include:
+
+- Web servers.
+- Database systems.
+- Python applications.
+- Browsers.
+- Monitoring platforms.
+- Backup software.
+- Development tools.
+- Security applications.
+
+An application generally runs in user space. It can request services from the kernel, but it is restricted from directly controlling privileged system resources.
+
+### Shells and user interfaces
+
+A **shell** is a user interface and command interpreter that allows a user or script to interact with the operating system.
+
+A graphical desktop, terminal emulator, remote management interface, or application API may also provide ways to interact with Linux.
+
+The shell belongs to user space. It does not replace the kernel. Instead, it requests operating-system services through user-space libraries and system calls.
+
+Detailed shell usage belongs to a later topic.
+
+### System libraries and APIs
+
+A **system library** is reusable software that provides functions for applications and other user-space programs.
+
+Libraries can:
+
+- Provide common programming functions.
+- Hide low-level implementation details.
+- Convert application requests into system-call requests.
+- Offer consistent interfaces across applications.
+- Reduce the need for every application to implement the same logic.
+
+An **API**, or Application Programming Interface, is a defined way for one software component to request functionality from another.
+
+Libraries and APIs are not the same as the kernel. They are user-space components that help applications communicate with the operating system.
+
+### System calls
+
+A **system call** is a controlled entry point through which a user-space application requests a service from the kernel.
+
+Typical requests include:
+
+- Creating or managing a process.
+- Allocating memory.
+- Accessing a file.
+- Communicating over a network.
+- Accessing a device.
+- Waiting for an event.
+- Checking system information.
+
+The Linux kernel documentation describes system calls as interaction points between user space and the kernel. [docs.kernel](https://docs.kernel.org/process/adding-syscalls.html)
+
+A system call is a boundary, not just an ordinary library function. When a program makes a system call, the processor transitions from a restricted user-mode context into a privileged kernel-mode context. [linux-kernel-labs.github](https://linux-kernel-labs.github.io/refs/heads/master/lectures/intro.html)
+
+### Linux kernel
+
+The Linux kernel is the privileged core of the system.
+
+It manages:
+
+- CPU scheduling.
+- Processes and threads.
+- Memory.
+- Filesystems.
+- Storage access.
+- Networking.
+- Device drivers.
+- Security mechanisms.
+- Inter-process communication.
+- System resources.
+
+The kernel does not normally provide the complete user-facing environment. It provides the core mechanisms that user-space software uses.
+
+### Hardware
+
+Hardware provides the physical or virtual resources managed by Linux.
+
+Examples include:
+
+- CPU.
+- RAM.
+- Storage devices.
+- Network adapters.
+- GPUs.
+- USB devices.
+- Hardware controllers.
+- Virtual disks.
+- Virtual network adapters.
+- Virtual CPUs.
+
+Linux may run on physical hardware, a virtual machine, a cloud instance, or an embedded device. In each case, the kernel manages the resources exposed to it.
+
+## 5. User Space and Kernel Space
+
+### User space
+
+**User space** is the environment where ordinary applications and services run.
+
+User-space components include:
+
+- Applications.
+- System libraries.
+- Shells.
+- Daemons.
+- Background services.
+- Development tools.
+- User interfaces.
+
+User-space programs run with restricted privileges. They cannot normally read or modify arbitrary kernel memory or directly control hardware.
+
+### Kernel space
+
+**Kernel space** is the privileged environment used by the Linux kernel.
+
+Kernel-space functions include:
+
+- Process management.
+- Memory management.
+- Filesystem support.
+- Networking.
+- Device drivers.
+- Security enforcement.
+- Hardware interaction.
+
+Kernel-space code has access to protected system resources. A severe kernel-level failure can affect the entire operating system.
+
+### Why the separation exists
+
+The separation between user space and kernel space provides:
+
+- Fault isolation.
+- Security boundaries.
+- Controlled hardware access.
+- Process isolation.
+- Resource management.
+- More predictable system behavior.
+
+Without this separation, an ordinary application could potentially overwrite kernel memory, interfere with other applications, or control hardware without permission.
+
+### Conceptual privilege model
+
+```text
++----------------------------------+
+|          USER SPACE              |
+|                                  |
+| Applications                     |
+| Services                         |
+| Daemons                          |
+| Shells                           |
+| System Libraries                 |
++----------------------------------+
+                 |
+                 | System Calls
+                 | Purple boundary
+                 v
++----------------------------------+
+|         KERNEL SPACE             |
+|                                  |
+| Process Management               |
+| Memory Management                |
+| Filesystems                      |
+| Networking                       |
+| Device Drivers                   |
+| Security                         |
++----------------------------------+
+                 |
+                 v
++----------------------------------+
+|            HARDWARE              |
+|                                  |
+| CPU, RAM, Storage, Network       |
+| Devices and Controllers          |
++----------------------------------+
+```
+
+The labels and layer boundaries explain the architecture even when color is unavailable.
+
+## 6. System Calls and Interfaces
+
+### What problem do system calls solve?
+
+Applications need operating-system services, but allowing applications to directly control hardware would create security and stability problems.
+
+System calls provide a controlled interface:
+
+```text
+Application
+     |
+     v
+System Library
+     |
+     v
+System Call
+     |
+     v
+Linux Kernel
+     |
+     v
+Hardware or System Resource
+```
+
+The application makes a request. The kernel:
+
+1. Identifies the requested service.
+2. Checks whether the request is valid.
+3. Checks applicable permissions and restrictions.
+4. Uses the appropriate kernel subsystem.
+5. Interacts with hardware or an internal resource.
+6. Returns a result or error information.
+
+### System calls versus libraries
+
+A library function runs in user space unless it needs to request a kernel service.
+
+For example:
+
+```text
+Application
+     |
+     v
+Library function
+     |
+     | May invoke a system call
+     v
+Linux Kernel
+```
+
+The application usually calls a library interface instead of manually constructing a low-level kernel request.
+
+This makes application development easier and provides a consistent interface across many programs.
+
+### System calls are controlled boundaries
+
+A system call is not unrestricted access to the kernel.
+
+The kernel can:
+
+- Validate arguments.
+- Check user identity.
+- Check permissions.
+- Check resource limits.
+- Reject invalid requests.
+- Return an error.
+- Isolate the operation from unrelated processes.
+
+The system-call boundary therefore has both a technical and a security purpose.
+
+## 7. Major Linux Kernel Subsystems
+
+The Linux kernel is logically divided into subsystems. These subsystems cooperate rather than operating as completely independent programs.
+
+### Process management
+
+The process-management subsystem:
+
+- Creates and terminates processes.
+- Schedules work on CPUs.
+- Tracks process state.
+- Coordinates threads.
+- Supports process communication.
+- Manages process relationships.
+
+A web server and a database server may both be running at the same time. Process management controls how they share CPU resources.
+
+### Memory management
+
+The memory-management subsystem:
+
+- Allocates memory.
+- Releases memory.
+- Provides virtual memory.
+- Protects process address spaces.
+- Manages memory used by the kernel.
+- Coordinates physical RAM and storage-backed memory.
+
+The kernel gives processes controlled memory views rather than allowing them to access arbitrary physical memory.
+
+### Filesystem layer
+
+The filesystem subsystem provides a common interface for applications to access data.
+
+It coordinates:
+
+- Files and directories.
+- Filesystem operations.
+- Storage caching.
+- File metadata.
+- Storage-device access.
+- Filesystem-specific implementations.
+
+Applications can use a common interface even when the underlying storage technology differs.
+
+### Networking subsystem
+
+The networking subsystem handles:
+
+- Network protocols.
+- Network interfaces.
+- Packets.
+- Routing.
+- Sockets.
+- Network namespaces.
+- Virtual network devices.
+
+Network-related architecture can be represented as:
+
+```text
+Application
+     |
+     v
+Network API
+     |
+     v
+Linux Networking Subsystem
+     |
+     v
+Network Driver
+     |
+     v
+Network Adapter
+     |
+     v
+Network
+```
+
+Teal is appropriate for this path because it represents network communication and networking components.
+
+### Device drivers
+
+A **device driver** is software that allows the kernel to communicate with a particular device.
+
+Examples include drivers for:
+
+- Network adapters.
+- Storage controllers.
+- USB devices.
+- Graphics hardware.
+- Audio devices.
+- Sensors.
+
+The driver translates general kernel requests into device-specific operations.
+
+```text
+Kernel Subsystem
+       |
+       v
+Device Driver
+       |
+       v
+Hardware Controller
+       |
+       v
+Physical Device
+```
+
+The kernel can use a common abstraction while the driver handles device-specific details.
+
+### Security mechanisms
+
+The kernel helps enforce:
+
+- User and group identities.
+- Access boundaries.
+- Process isolation.
+- Resource restrictions.
+- Security policies.
+- Network controls.
+
+Security is distributed across the system. The kernel is important, but secure operation also requires secure applications, correct configuration, updates, monitoring, and appropriate administrative controls.
+
+### Inter-process communication
+
+Processes sometimes need to exchange information or coordinate activities.
+
+The kernel supports mechanisms for:
+
+- Process synchronization.
+- Data exchange.
+- Event notification.
+- Shared resource coordination.
+
+For example, a web service may communicate with a database service through network sockets or other operating-system-supported interfaces.
+
+## 8. System Services and Daemons
+
+A **system service** is a software component that provides a function to other applications, users, or systems.
+
+A **daemon** is a background process that usually performs a service without requiring continuous direct interaction from a user.
+
+Examples include services that provide:
+
+- Web hosting.
+- DNS.
+- Logging.
+- Monitoring.
+- Time synchronization.
+- Remote access.
+- Database operation.
+- Network management.
+
+The relationship can be represented as:
+
+```text
+User or Application
+        |
+        v
+System Service
+        |
+        v
+Daemon Process
+        |
+        v
+Linux Kernel
+        |
+        v
+Hardware / Network / Storage
+```
+
+Services and daemons normally run in user space. They use system calls to request kernel functions.
+
+Service management belongs to a later topic.
+
+## 9. How an Application Communicates with Hardware
+
+Applications normally do not access hardware directly.
+
+Consider an application that needs to read data from storage:
+
+```text
+Application
+     |
+     v
+System Library
+     |
+     v
+System Call
+     |
+     v
+Filesystem Layer
+     |
+     v
+Storage Subsystem
+     |
+     v
+Device Driver
+     |
+     v
+Storage Device
+```
+
+### Step-by-step flow
+
+1. The application requests data.
+2. A system library provides an interface for the request.
+3. The application crosses the user-space boundary through a system call.
+4. The kernel validates the request.
+5. The filesystem layer identifies the required file and storage operation.
+6. The storage subsystem coordinates access to the device.
+7. The device driver communicates with the storage controller.
+8. The hardware returns data.
+9. The kernel processes the result.
+10. The result returns to the application through the system-call interface.
+
+The application sees a logical file or data resource. It does not need to understand the physical storage protocol.
+
+## 10. Architecture by Resource Type
+
+### CPU and memory
+
+```text
+Application
+     |
+     v
+System Library
+     |
+     v
+System Call
+     |
+     v
+Linux Kernel
+     |
+     +---- Process Management
+     |
+     +---- CPU Scheduler
+     |
+     +---- Memory Management
+     |
+     v
+CPU / RAM
+```
+
+The kernel decides when a process receives CPU time and which memory resources it can use.
+
+### Storage and filesystems
+
+```text
+Application
+     |
+     v
+System Call
+     |
+     v
+Filesystem Layer
+     |
+     v
+Storage Subsystem
+     |
+     v
+Device Driver
+     |
+     v
+Storage Device
+```
+
+The filesystem layer presents a logical structure while the storage subsystem and driver handle lower-level access.
+
+### Networking
+
+```text
+Application
+     |
+     v
+Network API
+     |
+     v
+System Call
+     |
+     v
+Linux Networking Subsystem
+     |
+     v
+Network Driver
+     |
+     v
+Network Adapter
+     |
+     v
+Network
+```
+
+The networking subsystem handles protocol and packet operations while the driver communicates with the network adapter.
+
+### Security boundary
+
+```text
+User-Space Application
+          |
+          | Controlled request
+          v
+     System Call Boundary
+          |
+          v
+      Kernel Space
+```
+
+Purple represents the system-call boundary. Red should be reserved for security warnings, denied access, privilege concerns, or boundary violations.
+
+## 11. Architecture and Virtual Machines
+
+Linux can run directly on physical hardware or inside a virtual machine.
+
+### Physical system
+
+```text
+Linux Applications
+        |
+Linux User Space
+        |
+Linux Kernel
+        |
+Physical Hardware
+```
+
+### Virtual machine
+
+```text
+Linux Applications
+        |
+Linux User Space
+        |
+Linux Kernel
+        |
+Virtual Hardware
+        |
+Hypervisor
+        |
+Physical Hardware
+```
+
+From the guest Linux kernel’s perspective, it may interact with virtual CPUs, virtual memory, virtual disks, and virtual network adapters.
+
+The physical hardware is managed by the host operating system and hypervisor. The guest kernel still performs its normal operating-system responsibilities within the resources presented to it.
+
+## 12. Real-World Example: Linux Web Server
+
+Consider a Linux web server receiving a request from a client.
+
+```text
+Client
+   |
+   v
+Network Adapter
+   |
+   v
+Network Driver
+   |
+   v
+Linux Networking Subsystem
+   |
+   v
+Web Server Process
+   |
+   v
+Filesystem / Application Resources
+```
+
+### What happens conceptually
+
+1. The network adapter receives data.
+2. The device driver transfers the data into kernel-managed structures.
+3. The Linux networking subsystem processes the network traffic.
+4. The web server process receives the request through a user-space interface.
+5. The process may request data from storage or another application service.
+6. The kernel schedules CPU time for the web server.
+7. The kernel manages the web server’s memory.
+8. The response travels back through the networking subsystem.
+9. The network driver sends the response through the network adapter.
+
+The web server application handles HTTP-level logic. The kernel handles CPU scheduling, memory, networking, storage access, and device communication.
+
+## 13. Real-World Enterprise Perspective
+
+A typical enterprise environment may look like this:
+
+```text
+Internet
+   |
+   v
+Firewall
+   |
+   v
+Load Balancer
+   |
+   v
+Linux Web Servers
+   |
+   v
+Linux Application Servers
+   |
+   v
+Linux Database Servers
+   |
+   v
+Storage
+   |
+   v
+Backup Infrastructure
+```
+
+Linux architecture appears at several layers:
+
+- The firewall may run Linux or a specialized network operating system.
+- Web servers run applications in user space.
+- The kernel manages network traffic, CPU, memory, storage, and processes.
+- Application servers use system libraries and kernel interfaces.
+- Database servers rely on kernel storage, memory, and networking subsystems.
+- Monitoring and backup systems run as user-space services.
+- Storage systems interact with kernel storage and device layers.
+
+### Engineering roles
+
+#### System Administrator
+
+The system administrator works with:
+
+- Operating-system configuration.
+- Users and access.
+- Services.
+- Storage.
+- Logs.
+- Updates.
+- Performance.
+- Troubleshooting.
+
+#### System Engineer
+
+The system engineer designs:
+
+- Server architectures.
+- Operating-system standards.
+- Virtualization platforms.
+- Hardware and software integration.
+- Availability and capacity plans.
+
+#### Network Engineer
+
+The network engineer works with:
+
+- Network interfaces.
+- Routing.
+- Firewalls.
+- DNS.
+- VPN systems.
+- Monitoring.
+- Network automation.
+
+#### Security Engineer
+
+The security engineer evaluates:
+
+- Privilege boundaries.
+- Access controls.
+- Kernel and user-space exposure.
+- System isolation.
+- Logs and security events.
+- Host and network protections.
+
+#### DevOps Engineer
+
+The DevOps engineer uses the architecture to design:
+
+- Automated deployments.
+- Configuration management.
+- Container platforms.
+- Monitoring.
+- Infrastructure as Code.
+- CI/CD environments.
+
+#### Cloud Engineer
+
+The cloud engineer works with:
+
+- Virtual CPUs.
+- Virtual memory.
+- Virtual disks.
+- Virtual network interfaces.
+- Linux images.
+- Cloud services.
+- Container hosts.
+
+#### Site Reliability Engineer
+
+The SRE uses architecture knowledge to investigate:
+
+- Resource exhaustion.
+- Process failures.
+- Storage delays.
+- Network failures.
+- Service latency.
+- System availability.
+
+#### Backend Developer
+
+The backend developer needs to understand:
+
+- How applications use libraries.
+- How applications access files.
+- How network communication reaches the kernel.
+- How memory and processes affect application behavior.
+- How production environments differ from development environments.
+
+## 14. Common Misconceptions
+
+### “Applications run inside the kernel”
+
+Most applications run in user space. They request kernel services through system calls.
+
+### “The kernel is the same as the shell”
+
+The shell is a user-space interface. The kernel manages resources and hardware.
+
+### “Libraries are part of the kernel”
+
+System libraries normally run in user space. They provide interfaces that may invoke system calls.
+
+### “System calls are ordinary application functions”
+
+System calls are controlled interfaces to kernel services. They cross from user space into kernel space.
+
+### “Applications can directly access hardware”
+
+Ordinary applications normally use kernel services and device drivers instead of controlling hardware directly.
+
+### “Every device driver is a separate operating system”
+
+A device driver is a software component that allows the kernel to communicate with a device. It is part of the broader operating-system architecture.
+
+### “User space is unimportant”
+
+User space contains applications, libraries, services, and shells that users interact with. A Linux system requires both user space and kernel space.
+
+### “Kernel space and user space are separate computers”
+
+They are privilege domains within the same operating system and memory architecture, not necessarily separate physical machines.
+
+### “The kernel handles application business logic”
+
+The kernel provides general operating-system services. Application logic belongs to user-space software.
+
+## 15. Practical Mental Model
+
+Use this simplified model:
+
+```text
+User
+  |
+  v
+Application
+  |
+  v
+System Library
+  |
+  v
+System Call
+  |
+  v
+Linux Kernel
+  |
+  +---- Process Management
+  |
+  +---- Memory Management
+  |
+  +---- Filesystem
+  |
+  +---- Networking
+  |
+  +---- Device Drivers
+  |
+  +---- Security
+  |
+  v
+Hardware / System Resource
+```
+
+When a program needs something:
+
+1. The application expresses a request.
+2. A system library may prepare the request.
+3. A system call crosses the user-space boundary.
+4. The kernel validates and processes the request.
+5. The correct kernel subsystem performs the work.
+6. A device driver may communicate with hardware.
+7. The kernel returns a result to the application.
+
+The key principle is:
+
+> Applications request services; the kernel controls resources.
+
+## 16. Summary
+
+Linux architecture is based on cooperation between several layers:
+
+- Users interact with applications and interfaces.
+- Applications and services run primarily in user space.
+- System libraries provide reusable interfaces.
+- System calls provide controlled entry points into the kernel.
+- The Linux kernel manages processes, memory, filesystems, networking, devices, security, and resources.
+- Device drivers connect kernel subsystems to specific hardware.
+- Hardware provides the physical or virtual resources used by the system.
+
+The distinction between user space and kernel space is central to Linux architecture. User-space software performs application and service work with restricted privileges. Kernel-space software performs privileged operations and manages hardware.
+
+Understanding this architecture helps explain real systems. A web server, database server, cloud virtual machine, network appliance, or container host depends on the same basic relationship between applications, system interfaces, the kernel, and hardware.
+
+## 17. Knowledge Check
+
+1. What are the major layers of Linux architecture?
+2. What is the difference between user space and kernel space?
+3. Why do applications normally use system calls instead of accessing hardware directly?
+4. What is the role of a system library?
+5. What is a system call?
+6. What responsibilities belong to the Linux kernel?
+7. What is the role of a device driver?
+8. How does a filesystem request reach a storage device?
+9. How does a network application communicate with a network adapter?
+10. Why is the user-space and kernel-space boundary important for security?
+11. What is the difference between a service and the kernel?
+12. How does Linux architecture appear in a web-server environment?
+
+## 18. Completion Checklist
+
+You should now understand:
+
+- [ ] The major layers of Linux architecture.
+- [ ] The role of users.
+- [ ] The role of applications.
+- [ ] The purpose of shells and user interfaces.
+- [ ] The role of system libraries and APIs.
+- [ ] The meaning of a system call.
+- [ ] The role of the Linux kernel.
+- [ ] The difference between user space and kernel space.
+- [ ] The purpose of process management.
+- [ ] The purpose of memory management.
+- [ ] The purpose of filesystem support.
+- [ ] The purpose of networking support.
+- [ ] The purpose of device drivers.
+- [ ] The role of kernel security mechanisms.
+- [ ] Why applications normally do not directly control hardware.
+- [ ] How storage requests move through Linux.
+- [ ] How network requests move through Linux.
+- [ ] How Linux architecture applies to virtual machines and enterprise servers.
+- [ ] How system administrators, network engineers, security engineers, DevOps engineers, cloud engineers, SREs, and backend developers interact with Linux architecture.
+
+## 19. Next Topic
+
+**Topic 03 — How Linux Works**# Topic 02 — Linux Architecture
+
+## 1. Introduction
+
+Linux architecture describes how users, applications, system software, the Linux kernel, and hardware interact.
+
+A Linux system is not one single program. It is a collection of layers with different responsibilities:
+
 * **Users** interact with applications.
 * **Applications** run in user space.
 * **Libraries** provide programming interfaces.
