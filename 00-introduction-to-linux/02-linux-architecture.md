@@ -1,4 +1,4 @@
-# Topic 02 — Linux Architecture
+# Topic 02 - Linux Architecture
 
 ## 1. Introduction
 
@@ -1026,4 +1026,4 @@ You should now understand:
 
 ## 20. Next Topic
 
-**Topic 03 — How Linux Works**
+**Topic 03 - How Linux Works**
