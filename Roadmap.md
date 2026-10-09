@@ -1,567 +1,261 @@
 # Practical Linux Server Administration Roadmap
 
-> A practical beginner-to-advanced Linux Server Administration roadmap covering Linux fundamentals, system administration, networking, security, storage, services, automation, troubleshooting, containers, virtualization, and cloud operations.
+> A command-driven, hands-on roadmap for learning Linux server setup, configuration, administration, networking, security, services, automation, monitoring, troubleshooting, containers, virtualization, and cloud operations.
 
----
+Reference: this roadmap expands the phase sequence and projects in this repository into practical setup/configuration tasks, commands, verification steps, and troubleshooting exercises.
 
-## Roadmap Objective
+## How to use this roadmap
 
-The goal of this roadmap is not simply to learn Linux commands.
+For every task, follow this cycle:
 
-The goal is to become capable of:
+1. **Prepare** the VM or service and record its initial state.
+2. **Configure** one change at a time.
+3. **Run commands** and capture relevant output.
+4. **Verify** expected behavior from the client side where possible.
+5. **Troubleshoot** using evidence rather than guessing.
+6. **Secure** the configuration and remove unnecessary exposure.
+7. **Document** the commands, results, cause of any failure, and recovery.
 
-* Deploying Linux servers
-* Managing users and permissions
-* Managing processes and services
-* Configuring networking
-* Administering SSH
-* Managing storage and filesystems
-* Installing and maintaining software
-* Configuring DNS and DHCP
-* Deploying web and application services
-* Monitoring servers
-* Reading and analyzing logs
-* Securing Linux systems
-* Automating administration tasks
-* Performing backup and recovery
-* Troubleshooting infrastructure failures
-* Managing containers
-* Working with Linux virtualization
-* Operating Linux servers in cloud environments
+Do not mark a topic complete after reading it. Complete the lab, verify the result, explain the configuration, and document a failure-and-recovery exercise.
 
-### Target Roles
+## Learning method
 
-* Linux System Administrator
-* Linux Server Administrator
-* System Engineer
-* System & Network Engineer
-* Infrastructure Engineer
-* Linux Support Engineer
-* Junior DevOps Engineer
-* Cloud Support Engineer
-* Security Engineer — Linux/Infrastructure focused
+- 20% concepts
+- 30% guided labs
+- 30% independent labs
+- 10% troubleshooting
+- 10% documentation
 
----
+## Target roles
 
-# Learning Philosophy
+- Linux System Administrator / Linux Server Administrator
+- System Engineer / System & Network Engineer
+- Infrastructure Engineer / Linux Support Engineer
+- Junior DevOps Engineer / Cloud Support Engineer
+- Security Engineer focused on Linux and infrastructure
 
-```text
-20% Concepts
-30% Guided Labs
-30% Independent Labs
-10% Troubleshooting
-10% Documentation
-```
+## Lab environment
 
-The learning cycle is:
+### Recommended low-cost layout
 
-```text
-Understand
-    ↓
-Configure
-    ↓
-Test
-    ↓
-Break
-    ↓
-Troubleshoot
-    ↓
-Automate
-    ↓
-Secure
-    ↓
-Document
-```
+Start with one Ubuntu Server LTS VM. Add a second Linux VM when practicing client/server networking. A third VM is optional for DNS, backup, or security testing.
 
-A topic is considered learned only when you can perform the task without following a tutorial step-by-step.
+| VM | Purpose | Suggested resources |
+|---|---|---|
+| Ubuntu Server 01 | Main server and administration target | 2 vCPU, 2–3 GB RAM, 25–40 GB disk |
+| Ubuntu Server 02 | Client or second server | 1–2 vCPU, 1–2 GB RAM, 20 GB disk |
+| Kali Linux or Ubuntu Server 03 | Authorized testing, backup, or service client | 1–2 vCPU, 1–2 GB RAM |
 
----
+On an 8 GB host, run only the VMs needed for the current lab. Use VMware Workstation or VirtualBox. KVM/libvirt and Proxmox are optional later platforms.
 
-# Recommended Lab Environment
+### Network modes
 
-## Primary Platform
+- **NAT:** best default for VM internet access through the host.
+- **Host-only:** isolated host-to-VM practice network; usually no internet by itself.
+- **Bridged:** places the VM on the physical LAN; use only when appropriate for that network.
+- **Internal/private network:** isolates lab VMs from the host LAN, depending on hypervisor configuration.
 
-* Ubuntu Server LTS
-* Ubuntu Desktop when GUI comparison is useful
-* Kali Linux for authorized security testing
-* Windows host
-* VMware Workstation / VirtualBox
-* Docker
-* Git
-* GitHub
+Record the VM's IP, prefix, gateway, DNS server, adapter mode, and subnet before troubleshooting.
 
-## Optional
+### Initial Ubuntu setup
 
-* Ubuntu Server 01
-* Ubuntu Server 02
-* Ubuntu Server 03
-* Kali Linux
-* Windows client VM
+Run these commands on a newly installed Ubuntu Server VM:
 
-### Basic Lab
+~~~bash
+hostnamectl
+cat /etc/os-release
+ip -br address
+ip route
+resolvectl status
+df -hT
+free -h
+sudo apt update
+sudo apt full-upgrade
+sudo apt install -y openssh-server curl wget vim nano git tree dnsutils traceroute tcpdump lsof
+sudo systemctl enable --now ssh
+systemctl status ssh --no-pager
+~~~
 
-```text
-                    Windows Host
-                         |
-                  Virtual Network
-                         |
-          +--------------+--------------+
-          |              |              |
-      Ubuntu 01      Ubuntu 02       Kali
-      Server         Server           Linux
-```
+Confirm that internet access works before installing packages. If package installation fails, investigate the IP address, default route, gateway reachability, DNS resolution, and hypervisor NAT/bridged configuration in that order.
 
-### Advanced Lab
-
-```text
-                         Lab Network
-                              |
-                +-------------+-------------+
-                |             |             |
-             Server01      Server02      Server03
-                |             |             |
-              DNS           Web          Backup
-                |
-              DHCP
-                |
-             Clients
-```
+Create a VM snapshot after a clean, updated baseline. Take additional snapshots before risky boot, storage, firewall, and network labs. Never use a production system as a failure-injection target.
 
 ---
 
 # Phase 0 — Linux Lab Foundation
 
-## Topics
+**Goal:** Build a repeatable and recoverable environment before learning administration.
 
-### 0.1 Virtual Machine Environment
+## Setup and configuration
 
-* VMware Workstation
-* VirtualBox
-* Virtual machines
-* CPU allocation
-* Memory allocation
-* Virtual disks
-* Virtual NICs
-* NAT
-* Bridged networking
-* Host-only networking
-* VM snapshots
-* VM cloning
-* VM templates
-* Resource limitations
+1. Create an Ubuntu Server VM with a hostname such as `server01`.
+2. Choose NAT for initial internet access.
+3. Record CPU, RAM, disk, adapter mode, IP address, gateway, and DNS.
+4. Create a second VM later for client/server practice.
+5. Take a clean snapshot before changing network or storage settings.
 
-### 0.2 Linux Lab Architecture
+## Commands
 
-Understand:
+~~~bash
+hostnamectl
+ip -br link
+ip -br address
+ip route
+resolvectl status
+ping -c 3 1.1.1.1
+getent hosts ubuntu.com
+lsblk
+df -hT
+free -h
+~~~
 
-* Server VM
-* Client VM
-* Management VM
-* Testing VM
-* Internal network
-* Internet access
-* DNS
-* DHCP
-* SSH
-* Web services
+## Labs
 
-### Lab 0.1 — Build Ubuntu Server
+- **Lab 0.1 — Build Ubuntu Server:** install Ubuntu Server, set hostname, create an administrator, update packages, enable SSH, and snapshot the VM.
+- **Lab 0.2 — Verify internet access:** test interface state, IP, gateway, public IP reachability, and DNS separately. Record which layer fails if internet access does not work.
+- **Lab 0.3 — Build a multi-VM network:** create a second VM, document the subnet, and verify connectivity only after checking that the VMs share a reachable network.
 
-Tasks:
+## Verification and evidence
 
-* Create Ubuntu Server VM
-* Configure hostname
-* Create administrator
-* Configure networking
-* Update system
-* Install OpenSSH
-* Connect remotely
-* Create VM snapshot
+- [ ] VM starts and shuts down cleanly.
+- [ ] Hostname and OS version are documented.
+- [ ] Default route and DNS configuration are recorded.
+- [ ] Package updates complete successfully.
+- [ ] SSH service is running.
+- [ ] Baseline snapshot exists.
 
-### Lab 0.2 — Build Multi-VM Network
-
-Create:
-
-```text
-Ubuntu Server 01
-Ubuntu Server 02
-Kali Linux
-```
-
-Verify:
-
-* IP connectivity
-* SSH connectivity
-* DNS resolution
-* routing
-* VM isolation
-
-### Project
-
-## Linux Home Lab Infrastructure
-
-Document:
-
-* VM architecture
-* IP addressing
-* hostname scheme
-* network topology
-* resource allocation
-* snapshots
-* administration procedure
+**Project:** Linux Home Lab Infrastructure — document VM layout, IP plan, hypervisor network mode, snapshots, and recovery procedure.
 
 ---
 
 # Phase 1 — Linux Fundamentals
 
-## Topics
+**Goal:** Understand the operating system and identify the machine accurately.
 
-### 1.1 Linux Introduction
+## Commands
 
-* What is Linux?
-* Linux kernel
-* GNU/Linux
-* Linux distribution
-* Ubuntu
-* Debian
-* Red Hat
-* Fedora
-* Arch
-* Linux server vs desktop
-* Open-source software
-* Linux licensing
-* Linux use cases
-
-### 1.2 Linux Architecture
-
-* Hardware
-* Firmware
-* Bootloader
-* Kernel
-* System calls
-* User space
-* Kernel space
-* Shell
-* System utilities
-* Services
-* Applications
-
-### 1.3 Kernel Concepts
-
-* Monolithic kernel
-* Kernel modules
-* Drivers
-* System calls
-* Processes
-* Memory management
-* Networking
-* Filesystems
-* Device management
-* Security subsystem
-
-### 1.4 Linux Distributions
-
-Understand:
-
-* Debian family
-* Red Hat family
-* Arch family
-* Package management differences
-* Filesystem similarities
-* Administration differences
-
-### Lab 1.1 — Linux System Identification
-
-Commands:
-
-```bash
-uname
+~~~bash
 uname -a
 hostnamectl
 cat /etc/os-release
-lsb_release -a
-```
+lscpu
+free -h
+lsblk
+uptime
+who
+systemctl --type=service --state=running
+~~~
 
-Collect:
+## Practical tasks
 
-* OS
-* kernel
-* architecture
-* hostname
-* uptime
+1. Identify the distribution, kernel, architecture, CPU, memory, disks, uptime, and running services.
+2. Trace the boot path conceptually: firmware → bootloader → kernel/initramfs → PID 1/systemd → services.
+3. Compare a kernel, a distribution, system utilities, services, and applications.
+4. Review the distribution family and package manager before using installation instructions.
 
-### Lab 1.2 — Linux Architecture Investigation
+## Lab and verification
 
-Investigate:
+Build a system inventory report from real command output. Re-run it after a reboot and identify which values changed.
 
-```text
-Firmware
-   ↓
-Bootloader
-   ↓
-Kernel
-   ↓
-systemd
-   ↓
-Services
-   ↓
-User applications
-```
-
-### Project
-
-## Linux System Inventory Tool
-
-Create a script that reports:
-
-```text
-Hostname
-OS
-Kernel
-CPU
-Memory
-Disk
-Network
-IP address
-Uptime
-Logged-in users
-Running services
-```
+**Project:** Linux System Inventory Tool — report hostname, OS, kernel, CPU, memory, disk, network, uptime, users, and services. Avoid collecting secrets.
 
 ---
 
-# Phase 2 — Linux Installation & Boot
+# Phase 2 — Linux Installation and Boot
 
-## Topics
+**Goal:** Understand installation choices and diagnose startup problems safely.
 
-* Linux installation
-* ISO images
-* UEFI
-* BIOS
-* GPT
-* MBR
-* Bootloader
-* GRUB
-* initramfs
-* kernel loading
-* boot targets
-* systemd
-* rescue mode
-* emergency mode
-* recovery mode
-* kernel parameters
-* boot logs
+## Commands
 
-### Lab 2.1 — Linux Installation
-
-Install Ubuntu Server manually.
-
-Document:
-
-* disk layout
-* hostname
-* users
-* network
-* SSH
-* packages
-
-### Lab 2.2 — Boot Investigation
-
-Investigate:
-
-```bash
+~~~bash
+lsblk -f
+findmnt
+systemctl get-default
 systemd-analyze
 systemd-analyze blame
 journalctl -b
-journalctl -k
-```
+journalctl -k -b
+systemctl --failed
+~~~
 
-### Lab 2.3 — Boot Failure Recovery
+## Practical tasks
 
-Create controlled failures using VM snapshots.
+1. Record the VM disk layout before installation.
+2. Identify UEFI/BIOS mode, partition scheme, bootloader, initramfs, kernel, and systemd.
+3. Compare normal boot with rescue or emergency mode using documentation and a disposable VM.
+4. Inspect boot logs after a controlled service failure.
 
-Practice:
+## Labs
 
-* service failure
-* incorrect configuration
-* filesystem issue
-* boot troubleshooting
+- **Lab 2.1:** Install Ubuntu Server and document storage, hostname, user, networking, SSH, and package choices.
+- **Lab 2.2:** Inspect the current boot using `journalctl -b`, `journalctl -k -b`, and `systemd-analyze`.
+- **Lab 2.3:** Disable a noncritical test service, reboot, identify the failure, restore the service, and verify recovery.
 
-### Project
+**Safety:** Do not experiment with bootloader, partition, or root filesystem changes without a snapshot and a recovery path.
 
-## Linux Boot Troubleshooting Lab
-
-Document at least:
-
-* 3 boot problems
-* symptoms
-* evidence
-* root cause
-* recovery
-* verification
+**Project:** Linux Boot Troubleshooting Lab — document three symptoms, evidence, root cause, recovery, and verification steps.
 
 ---
 
 # Phase 3 — Linux Filesystem
 
-## Topics
+**Goal:** Investigate paths, inodes, metadata, links, mount points, and virtual filesystems.
 
-### 3.1 Filesystem Fundamentals
+## Commands
 
-* Files
-* Directories
-* Paths
-* Absolute paths
-* Relative paths
-* File types
-* Inodes
-* Metadata
-* Directory entries
-* File descriptors
+~~~bash
+pwd
+ls -la /
+ls -li
+stat /etc/hostname
+file /etc/hostname
+findmnt
+df -hT
+df -i
+du -sh "$HOME"
+find "$HOME" -maxdepth 2 -type f
+readlink -f /bin/sh
+ls -ld /proc /sys /dev /run
+~~~
 
-### 3.2 Filesystem Hierarchy
+## Practical tasks
 
-Master:
+1. Explain the purpose of `/boot`, `/dev`, `/etc`, `/home`, `/lib`, `/media`, `/mnt`, `/opt`, `/proc`, `/root`, `/run`, `/sbin`, `/srv`, `/sys`, `/tmp`, `/usr`, and `/var`.
+2. Create a test file, hard link, and symbolic link in a directory under your home directory.
+3. Compare inode numbers, link counts, ownership, permissions, and timestamps using `ls -li` and `stat`.
+4. Inspect `/proc/cpuinfo`, `/proc/meminfo`, `/proc/mounts`, `/proc/uptime`, and a live `/proc/PID/` directory.
+5. Distinguish disk-backed files from virtual filesystem interfaces.
 
-```text
-/
-├── boot
-├── dev
-├── etc
-├── home
-├── lib
-├── media
-├── mnt
-├── opt
-├── proc
-├── root
-├── run
-├── sbin
-├── srv
-├── sys
-├── tmp
-├── usr
-└── var
-```
+## Labs
 
-### 3.3 Links
+- **Lab 3.1 — Filesystem investigation:** use `ls`, `stat`, `file`, `df`, `du`, and `find` to investigate a test directory.
+- **Lab 3.2 — Inodes and links:** create normal, hard-linked, and symbolic-linked names; remove one name and verify the remaining links.
+- **Lab 3.3 — /proc investigation:** inspect CPU, memory, mounts, uptime, and a running process.
 
-* Hard links
-* Symbolic links
-* inode relationships
-* link counts
-* broken symlinks
-
-### 3.4 Virtual Filesystems
-
-* `/proc`
-* `/sys`
-* `/dev`
-* `/run`
-
-### 3.5 File Metadata
-
-* Permissions
-* Ownership
-* Size
-* timestamps
-* inode
-* file type
-
-### Lab 3.1 — Filesystem Investigation
-
-Investigate:
-
-```bash
-ls
-stat
-file
-df
-du
-find
-```
-
-### Lab 3.2 — Inode Investigation
-
-Compare:
-
-* normal file
-* hard link
-* symbolic link
-
-### Lab 3.3 — `/proc` Investigation
-
-Inspect:
-
-```text
-/proc/cpuinfo
-/proc/meminfo
-/proc/mounts
-/proc/uptime
-/proc/<PID>/
-```
-
-### Project
-
-## Linux Filesystem Investigation Toolkit
-
-Build a script that reports:
-
-* largest files
-* largest directories
-* inode usage
-* mounted filesystems
-* recently modified files
-* symbolic links
-* broken symbolic links
+**Project:** Linux Filesystem Investigation Toolkit — report mount points, capacity, inode usage, largest files/directories, file metadata, and broken symlinks.
 
 ---
 
 # Phase 4 — Linux Command Line
 
-## Topics
+**Goal:** Use Bash and standard utilities to inspect, filter, and transform system information.
 
-* Terminal
-* Shell
-* Bash
-* Commands
-* Arguments
-* Options
-* Environment variables
-* PATH
-* Command history
-* Aliases
-* Command substitution
-* Quoting
-* Wildcards
-* Globbing
-* stdin
-* stdout
-* stderr
-* redirection
-* pipes
-* command chaining
-* exit codes
+## Commands
 
-### Commands
-
-```bash
-ls
-cd
+~~~bash
 pwd
+ls -lah
+mkdir -p ~/lab-cli
+touch ~/lab-cli/example.txt
 cp
 mv
 rm
-mkdir
-touch
 cat
 less
-more
 head
 tail
 grep
 find
-locate
 sort
 uniq
 cut
@@ -570,2581 +264,1268 @@ wc
 xargs
 file
 stat
-```
+~~~
 
-### Lab 4.1 — Command Pipeline
+Use destructive commands only with an explicit test path; do not copy a bare `rm -rf` example into a live shell.
 
-Build pipelines that:
+## Practical tasks
 
-* search logs
-* filter records
-* count results
-* sort results
-* generate reports
+1. Practice arguments, options, environment variables, `PATH`, quoting, globbing, command substitution, and exit codes.
+2. Redirect standard output and errors separately.
+3. Build pipelines that search a log, sort results, count repeated values, and save a report.
+4. Use `grep`, `sed`, and `awk` to extract useful fields from sample text.
+5. Explain the difference between shell built-ins and external commands.
 
-### Lab 4.2 — Redirection
+## Labs
 
-Practice:
+- **Lab 4.1 — Command pipeline:** filter and count records from a test log.
+- **Lab 4.2 — Redirection:** send output and errors to separate files, then verify each.
+- **Lab 4.3 — Log analysis:** inspect permitted files under `/var/log` and explain any permission limits.
 
-```bash
->
->>
-<
-2>
-2>>
-&
-|
-```
-
-### Lab 4.3 — Log Analysis
-
-Analyze:
-
-```text
-/var/log/
-```
-
-### Project
-
-## Linux Log Analyzer
-
-Input:
-
-```text
-auth logs
-system logs
-web logs
-```
-
-Output:
-
-```text
-Failed logins
-Successful logins
-Top source IPs
-Top users
-Error counts
-Time distribution
-```
+**Project:** Linux Log Analyzer — summarize error counts, failed login events, and timestamps from available logs without exposing credentials or tokens.
 
 ---
 
-# Phase 5 — Users & Groups
+# Phase 5 — Users and Groups
 
-## Topics
+**Goal:** Manage accounts and group membership using least privilege.
 
-* Users
-* Groups
-* UID
-* GID
-* Primary group
-* Supplementary groups
-* `/etc/passwd`
-* `/etc/shadow`
-* `/etc/group`
-* `/etc/gshadow`
-* root
-* sudo
-* su
-* user lifecycle
-* password management
-* login shell
-* home directory
-* user environment
+## Commands
 
-### Commands
-
-```bash
-useradd
-usermod
-userdel
-passwd
+~~~bash
+whoami
 id
 groups
-who
-w
-whoami
-su
-sudo
-groupadd
-groupmod
-groupdel
-```
+getent passwd
+getent group
+sudo adduser developer01
+sudo groupadd developers
+sudo usermod -aG developers developer01
+sudo passwd -l developer01
+sudo passwd -u developer01
+sudo chage -l developer01
+sudo userdel -r developer01
+~~~
 
-### Lab 5.1 — Company Users
+Use a disposable lab account. Do not lock or delete your only administrator account.
 
-Create:
+## Practical tasks
 
-```text
-admin
-developer01
-developer02
-network01
-support01
-backup01
-```
+1. Inspect account records with `getent passwd`, `getent group`, and `id`.
+2. Create department groups and test users.
+3. Add users to supplementary groups using `usermod -aG`; verify membership with `id`.
+4. Practice account expiry and locking on test accounts.
+5. Review sudo access and login shells.
 
-### Lab 5.2 — Department Groups
+## Labs
 
-Create:
+- **Lab 5.1 — Company users:** create test accounts for developers, network, support, and backup roles.
+- **Lab 5.2 — Department groups:** create groups and assign test users.
+- **Lab 5.3 — User lifecycle:** create, modify, lock, unlock, expire, and remove a test account.
 
-```text
-developers
-network
-support
-management
-backup
-```
-
-### Lab 5.3 — User Lifecycle
-
-Practice:
-
-```text
-Create
-Modify
-Lock
-Unlock
-Expire
-Delete
-```
-
-### Project
-
-## Linux Multi-User Enterprise Server
-
-Simulate a company environment with departmental users and groups.
+**Project:** Linux Multi-User Server — document the account matrix, group membership, sudo policy, and account removal procedure.
 
 ---
 
-# Phase 6 — Linux Permissions & Access Control
+# Phase 6 — Linux Permissions and Access Control
 
-## Topics
+**Goal:** Configure and verify file access using Unix permissions, ACLs, and capabilities.
 
-* Read
-* Write
-* Execute
-* Owner
-* Group
-* Others
-* chmod
-* chown
-* chgrp
-* umask
-* SUID
-* SGID
-* Sticky bit
-* ACL
-* POSIX ACL
-* capabilities
-* least privilege
+## Commands
 
-### Commands
-
-```bash
-chmod
-chown
-chgrp
+~~~bash
 umask
-getfacl
-setfacl
-getcap
-setcap
-```
+ls -l
+chmod 640 file.txt
+chown user:group file.txt
+chgrp group file.txt
+getfacl file.txt
+setfacl -m u:developer01:r-- file.txt
+getcap /usr/bin/ping
+~~~
 
-### Lab 6.1 — Permission Matrix
+Run examples against files and directories created under your lab directory.
 
-Create:
+## Practical tasks
 
-```text
-Management
-Developers
-Network
-Support
-Shared
-```
+1. Translate symbolic permissions and numeric modes.
+2. Configure a shared directory with group ownership and setgid where appropriate.
+3. Use ACLs to grant a specific test user access without broadening access for everyone.
+4. Inspect SUID, SGID, sticky bit, and Linux capabilities.
+5. Verify access by switching to a test user or using a controlled command such as `sudo -u developer01 -- test -r path`.
 
-Apply different permissions.
+## Labs
 
-### Lab 6.2 — Shared Directory
+- **Lab 6.1:** Build a permission matrix for management, developers, network, support, and shared directories.
+- **Lab 6.2:** Configure department-only read/write access.
+- **Lab 6.3:** Apply and verify a user-specific ACL.
+- **Lab 6.4:** Inspect special permission bits and explain their security implications.
 
-Implement:
+**Security rule:** Avoid recursive ownership or permission changes on system directories.
 
-```text
-Department → read/write
-Other users → no access
-```
-
-### Lab 6.3 — ACL
-
-Create different permissions for individual users.
-
-### Lab 6.4 — SUID/SGID/Sticky Bit
-
-Investigate real-world use cases.
-
-### Project
-
-## Linux Access Control Lab
-
-Document:
-
-* permission model
-* ACL model
-* privilege boundaries
-* security risks
-* verification commands
+**Project:** Linux Access Control Lab — document expected access, actual test results, privilege boundaries, and remediation.
 
 ---
 
-# Phase 7 — Processes & Job Management
+# Phase 7 — Processes and Job Management
 
-## Topics
+**Goal:** Inspect process state and safely control workloads.
 
-* Program vs process
-* PID
-* PPID
-* Process tree
-* Process states
-* CPU scheduling
-* foreground process
-* background process
-* jobs
-* signals
-* daemon
-* zombie
-* orphan
-* process priority
-* nice
-* renice
-* resource consumption
+## Commands
 
-### Commands
-
-```bash
-ps
+~~~bash
+ps -eo pid,ppid,user,stat,%cpu,%mem,cmd --sort=-%cpu | head
 top
-htop
-pstree
-pgrep
-pkill
-kill
-killall
+pgrep -a ssh
+pstree -p
 jobs
-fg
-bg
-nice
-renice
-```
+sleep 300 &
+jobs
+kill -TERM %1
+nice -n 10 sleep 60 &
+pgrep -a sleep
+~~~
 
-### Lab 7.1 — Process Investigation
+Use `htop` only if installed. Confirm a PID before sending a signal.
 
-Identify:
+## Practical tasks
 
-* PID
-* PPID
-* CPU usage
-* memory usage
-* command
-* process state
+1. Identify PID, PPID, state, owner, CPU, and memory.
+2. Compare foreground/background jobs and shell job control.
+3. Explain SIGINT, SIGTERM, SIGKILL, SIGSTOP, and SIGCONT.
+4. Inspect zombies and orphaned processes from observation or a controlled example.
+5. Use `nice` and `renice` on a noncritical test process.
 
-### Lab 7.2 — Signal Management
+## Labs
 
-Practice:
+- **Lab 7.1:** Record process metadata and explain the process tree.
+- **Lab 7.2:** Start a test process in the background and terminate it gracefully.
+- **Lab 7.3:** Create a controlled workload, observe resource use, and stop it safely.
 
-```text
-SIGINT
-SIGTERM
-SIGKILL
-SIGSTOP
-SIGCONT
-```
-
-### Lab 7.3 — High CPU Simulation
-
-Create a controlled CPU workload.
-
-Investigate and resolve it.
-
-### Project
-
-## Linux Process Monitoring Tool
-
-Detect:
-
-* high CPU
-* high memory
-* long-running processes
-* stopped processes
-* suspicious processes
+**Project:** Linux Process Monitor — report top CPU/memory processes, process state, and timestamped observations.
 
 ---
 
-# Phase 8 — systemd & Service Management
+# Phase 8 — systemd and Service Management
 
-## Topics
+**Goal:** Manage services, units, startup behavior, and service failures.
 
-* systemd
-* PID 1
-* units
-* service units
-* target units
-* socket units
-* timer units
-* mount units
-* dependencies
-* service states
-* startup
-* shutdown
-* enable
-* disable
-* restart
-* daemon reload
-* journal
+## Commands
 
-### Commands
+~~~bash
+systemctl status ssh --no-pager
+systemctl is-enabled ssh
+systemctl list-units --type=service --state=running
+systemctl --failed
+journalctl -u ssh --since today
+systemctl cat ssh
+systemctl get-default
+systemd-analyze critical-chain
+~~~
 
-```bash
-systemctl
-journalctl
-systemd-analyze
-```
+## Practical tasks
 
-### Lab 8.1 — Service Lifecycle
+1. Inspect service, target, socket, timer, and mount units.
+2. Distinguish start/stop from enable/disable.
+3. Inspect service dependencies and recent logs.
+4. Create a simple custom service for a harmless script in a lab VM.
+5. Validate unit syntax and reload systemd after editing a unit.
 
-Practice:
+## Labs
 
-```text
-start
-stop
-restart
-enable
-disable
-mask
-unmask
-```
+- **Lab 8.1:** Practice the lifecycle of a noncritical service.
+- **Lab 8.2:** Create a custom systemd service with a dedicated script and log output.
+- **Lab 8.3:** Introduce a reversible error in the test service, diagnose it with `systemctl status` and `journalctl`, and restore it.
 
-### Lab 8.2 — Create Custom Service
-
-Create a systemd service for your own script.
-
-### Lab 8.3 — Service Failure
-
-Break a service configuration and troubleshoot it.
-
-### Project
-
-## Linux Service Health Manager
-
-Monitor:
-
-```text
-SSH
-Nginx
-Docker
-DNS
-custom application
-```
-
-Automatically:
-
-* detect failure
-* collect logs
-* restart service
-* record event
-* verify recovery
+**Project:** Linux Service Health Manager — check selected services, collect logs on failure, and record recovery evidence. Do not automatically restart every failed service without considering the cause.
 
 ---
 
 # Phase 9 — Package Management
 
-## Topics
+**Goal:** Install, inspect, update, and troubleshoot software packages.
 
-* APT
-* dpkg
-* repositories
-* package metadata
-* dependencies
-* package installation
-* package removal
-* package updates
-* upgrades
-* security updates
-* broken packages
-* package verification
-* package cache
-* unattended upgrades
-* Snap
-* source compilation
+## Commands
 
-### Commands
+~~~bash
+sudo apt update
+apt list --upgradable
+apt-cache policy openssh-server
+apt show openssh-server
+dpkg -l openssh-server
+dpkg -S /usr/sbin/sshd
+sudo apt install tree
+sudo apt remove tree
+sudo apt --fix-broken install
+sudo dpkg --configure -a
+~~~
 
-```bash
-apt
-apt-cache
-apt-mark
-dpkg
-snap
-```
+## Practical tasks
 
-### Lab 9.1 — Package Lifecycle
+1. Inspect repositories and package candidates before installing.
+2. Distinguish package index updates from package upgrades.
+3. Inspect installed files and package ownership.
+4. Review security updates and unattended-upgrades configuration.
+5. Explain when Snap or source compilation may be appropriate.
 
-Install, inspect, update and remove packages.
+## Labs
 
-### Lab 9.2 — Broken Package Recovery
+- **Lab 9.1:** Install a small package, inspect its metadata and files, then remove it.
+- **Lab 9.2:** Diagnose a simulated package-management problem in a disposable VM.
+- **Lab 9.3:** Produce a patch report with available updates and reboot status.
 
-Create a controlled package/configuration problem and recover it.
-
-### Lab 9.3 — Patch Management
-
-Create an update report.
-
-### Project
-
-## Linux Patch Management Tool
-
-Report:
-
-```text
-Installed packages
-Available updates
-Security updates
-Reboot required
-Last update
-```
+**Project:** Linux Patch Management Report — include installed versions, available updates, security considerations, maintenance window, and verification.
 
 ---
 
 # Phase 10 — Linux Networking Fundamentals
 
-## Topics
+**Goal:** Understand addressing, routes, DNS, transport protocols, sockets, and packet flow.
 
-* Network interfaces
-* Ethernet
-* MAC addresses
-* IPv4
-* IPv6
-* subnetting
-* gateway
-* routing
-* ARP
-* DNS
-* DHCP
-* TCP
-* UDP
-* ports
-* sockets
-* loopback
-* localhost
-* network namespaces
+## Commands
 
-### Commands
-
-```bash
-ip
-ss
-ping
-tracepath
-traceroute
-mtr
-arp
-resolvectl
-hostnamectl
-```
-
-### Lab 10.1 — Interface Investigation
-
-Identify:
-
-* interface
-* MAC
-* IP
-* subnet
-* gateway
-* DNS
-
-### Lab 10.2 — Routing Investigation
-
-Inspect:
-
-```bash
+~~~bash
+ip -br link
+ip -br address
 ip route
-```
-
-### Lab 10.3 — Socket Investigation
-
-Use:
-
-```bash
+ip neigh
 ss -tulpn
-```
+ping -c 4 127.0.0.1
+ping -c 4 <gateway-ip>
+ping -c 4 1.1.1.1
+getent hosts ubuntu.com
+resolvectl status
+tracepath 1.1.1.1
+sudo tcpdump -ni ens33
+~~~
 
-### Lab 10.4 — Packet Capture
+Replace placeholders such as `<gateway-ip>` with actual values. Do not assume a particular interface name.
 
-Use:
+## Practical tasks
 
-```bash
-tcpdump
-```
+1. Identify MAC address, IPv4/IPv6 addresses, prefix, gateway, and DNS resolver.
+2. Explain ARP/neighbor discovery, TCP/UDP, ports, sockets, and routing.
+3. Test connectivity in layers: interface → address → local gateway → external IP → DNS → application.
+4. Capture only traffic you are authorized to inspect.
+5. Learn how network namespaces isolate interfaces and routes.
 
-and Wireshark from the host.
+## Labs
 
-### Project
+- **Lab 10.1:** Inventory interface and route configuration.
+- **Lab 10.2:** Diagnose a missing default route using read-only commands first.
+- **Lab 10.3:** Identify listening sockets and the process using a selected port.
+- **Lab 10.4:** Capture DNS or ICMP traffic in your own lab.
 
-## Linux Network Diagnostic Toolkit
-
-Automate:
-
-```text
-Interface check
-IP check
-Gateway check
-DNS check
-Internet check
-Port check
-Latency check
-Packet loss
-Routing check
-```
+**Project:** Linux Network Diagnostic Toolkit — report interface state, IP, route, gateway test, DNS test, listening ports, and timestamped results.
 
 ---
 
 # Phase 11 — Linux Network Configuration
 
-## Topics
+**Goal:** Configure and troubleshoot IP addressing, routes, DNS, virtual interfaces, and network services.
 
-* Netplan
-* static IP
-* DHCP
-* DNS configuration
-* gateway
-* routes
-* VLAN concepts
-* bonding concepts
-* bridges
-* NetworkManager
-* network namespaces
-* virtual interfaces
-* MTU
-* IPv4
-* IPv6
+## Inspect before changing
 
-### Lab 11.1 — Static Network
+~~~bash
+ip -br address
+ip route
+resolvectl status
+networkctl status
+nmcli device status
+ls -l /etc/netplan/
+sudo cat /etc/netplan/*.yaml
+~~~
 
-Configure static addressing.
+Some commands may not be installed or active on every Ubuntu Server configuration. Identify whether Netplan uses systemd-networkd or NetworkManager before editing configuration.
 
-### Lab 11.2 — DHCP
+## Practical tasks
 
-Configure DHCP client.
+1. Document the current IP, gateway, DNS, and interface before a change.
+2. Inspect the active Netplan YAML and renderer.
+3. Configure a static IP only after confirming the correct subnet, gateway, and DNS.
+4. Use a console or VM snapshot before applying changes that could disconnect SSH.
+5. Learn the concepts of VLANs, bridges, bonding, MTU, IPv6, and network namespaces.
 
-### Lab 11.3 — Network Failure
+## Labs
 
-Break:
+- **Lab 11.1:** Configure a static address in an isolated lab and verify address, route, and DNS.
+- **Lab 11.2:** Observe DHCP-assigned addressing and lease behavior.
+- **Lab 11.3:** Diagnose separate simulated failures: wrong gateway, DNS failure, and missing route.
+- **Lab 11.4:** Create and inspect network namespaces in a disposable VM.
 
-* gateway
-* DNS
-* IP configuration
-* route
-
-Troubleshoot each independently.
-
-### Lab 11.4 — Network Namespace
-
-Create isolated network namespaces.
-
-### Project
-
-## Linux Network Configuration Lab
-
-Document:
-
-```text
-Network architecture
-Addressing
-Routing
-DNS
-Troubleshooting procedure
-```
+**Project:** Linux Network Configuration Lab — provide the topology, address plan, configuration file, verification output, and rollback procedure.
 
 ---
 
 # Phase 12 — SSH Remote Administration
 
-## Topics
+**Goal:** Administer Linux servers remotely with authenticated and restricted access.
 
-* OpenSSH
-* SSH client
-* SSH server
-* sshd
-* public/private keys
-* authorized_keys
-* SSH configuration
-* host keys
-* known_hosts
-* password authentication
-* key authentication
-* SCP
-* SFTP
-* rsync
-* SSH tunneling
-* local forwarding
-* remote forwarding
-* ProxyJump
-* agent forwarding
-* remote commands
+## Commands
 
-### Lab 12.1 — SSH Server
+~~~bash
+sudo systemctl status ssh --no-pager
+sudo sshd -t
+sudo sshd -T
+ssh user@server-address
+ssh-keygen -t ed25519
+ssh-copy-id user@server-address
+scp file.txt user@server-address:~
+sftp user@server-address
+rsync -av ./lab-data/ user@server-address:~/lab-data/
+ssh -v user@server-address
+~~~
 
-Configure and test OpenSSH.
+## Practical tasks
 
-### Lab 12.2 — Key Authentication
+1. Install and enable OpenSSH Server.
+2. Configure key-based authentication between two lab VMs.
+3. Verify host keys and understand `known_hosts` and `authorized_keys`.
+4. Inspect `/etc/ssh/sshd_config` and configuration drop-ins.
+5. Test SSH configuration with `sshd -t` before reloading.
+6. Practice SCP/SFTP/rsync, remote commands, local/remote forwarding, ProxyJump, and agent-forwarding concepts.
 
-Disable password authentication in a controlled lab.
+## Security and recovery
 
-### Lab 12.3 — Secure File Transfer
+- Keep the current SSH session open while testing changes.
+- Verify a second login before closing the known-good session.
+- Do not disable password authentication until key login is confirmed.
+- Restrict access with least privilege and firewall rules.
 
-Use:
+## Labs
 
-```bash
-scp
-sftp
-rsync
-```
+- **Lab 12.1:** Connect to the server from a second VM.
+- **Lab 12.2:** Configure and test Ed25519 key authentication.
+- **Lab 12.3:** Transfer a test file and verify its checksum.
+- **Lab 12.4:** Diagnose wrong key, permissions, refusal, and timeout separately.
 
-### Lab 12.4 — SSH Troubleshooting
-
-Investigate:
-
-* authentication failure
-* connection refused
-* timeout
-* wrong permissions
-* wrong key
-
-### Project
-
-## Secure Linux Remote Administration Lab
-
-Architecture:
-
-```text
-Administrator
-     |
-     +---- SSH ---- Server01
-     |
-     +---- SSH ---- Server02
-     |
-     +---- SSH ---- Server03
-```
+**Project:** Secure Linux Remote Administration Lab — document authentication, permitted users, firewall rules, and troubleshooting procedure.
 
 ---
 
-# Phase 13 — Linux Storage & Filesystems
+# Phase 13 — Linux Storage and Filesystems
 
-## Topics
+**Goal:** Provision, mount, inspect, and troubleshoot virtual storage.
 
-* HDD
-* SSD
-* block devices
-* partitions
-* GPT
-* MBR
-* filesystem
-* ext4
-* XFS concepts
-* filesystem creation
-* mounting
-* unmounting
-* mount options
-* `/etc/fstab`
-* UUID
-* labels
-* disk usage
-* inode usage
-* filesystem checks
-* SMART
-* quotas
-* swap
+## Setup
 
-### Commands
+Attach an additional virtual disk to a disposable VM. Identify it before making changes; device names can differ.
 
-```bash
-lsblk
-blkid
-fdisk
-parted
-mkfs
-mount
-umount
-df
-du
-fsck
-```
+## Commands
 
-### Lab 13.1 — Additional Virtual Disk
+~~~bash
+lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINTS,UUID
+sudo blkid
+sudo fdisk -l
+findmnt
+df -hT
+df -i
+du -xhd1 /var 2>/dev/null
+sudo parted -l
+sudo smartctl -a /dev/sdX
+~~~
 
-Attach a virtual disk.
+Use `/dev/sdX` only as a placeholder. Confirm the actual target with `lsblk`; do not copy a formatting command until the correct disk is identified. Install `smartmontools` only if needed and supported by the virtual device.
 
-Perform:
+## Practical tasks
 
-```text
-Partition
-Format
-Mount
-Unmount
-Persistent mount
-```
+1. Explain block devices, partitions, GPT/MBR, ext4, XFS concepts, UUIDs, labels, and mount points.
+2. Partition and format only the additional test disk.
+3. Mount it temporarily and verify with `findmnt`.
+4. Configure a persistent mount using UUID in `/etc/fstab`.
+5. Test the fstab entry with `sudo mount -a` before rebooting.
+6. Inspect disk blocks, inode use, quotas, filesystem checks, and swap concepts.
 
-### Lab 13.2 — `/etc/fstab`
+## Labs
 
-Configure persistent storage using UUID.
+- **Lab 13.1:** Partition, format, and mount an additional virtual disk.
+- **Lab 13.2:** Configure a persistent mount by UUID and verify it after reboot.
+- **Lab 13.3:** Diagnose a simulated disk-space or inode-space issue using read-only tools first.
 
-### Lab 13.3 — Disk Full Simulation
-
-Create a controlled disk-full condition.
-
-Troubleshoot:
-
-```text
-disk blocks
-inodes
-large files
-deleted-but-open files
-```
-
-### Project
-
-## Linux Storage Administration Lab
+**Project:** Linux Storage Administration Lab — document device identity, partition table, filesystem, mount options, persistent configuration, and recovery steps.
 
 ---
 
 # Phase 14 — LVM
 
-## Topics
+**Goal:** Create and extend logical storage volumes safely.
 
-* Physical Volume
-* Volume Group
-* Logical Volume
-* PE
-* LE
-* filesystem
-* LVM snapshots
-* extending volumes
-* shrinking concepts
-* filesystem resizing
+## Commands to learn
 
-### Commands
-
-```bash
-pvcreate
+~~~bash
 pvs
-vgcreate
 vgs
-lvcreate
 lvs
-lvextend
-lvreduce
-```
+sudo pvcreate /dev/<test-disk-partition>
+sudo vgcreate vg_lab /dev/<test-disk-partition>
+sudo lvcreate -L 2G -n lv_data vg_lab
+sudo mkfs.ext4 /dev/vg_lab/lv_data
+sudo mkdir -p /mnt/lab-data
+sudo mount /dev/vg_lab/lv_data /mnt/lab-data
+sudo lvextend -L +1G /dev/vg_lab/lv_data
+sudo resize2fs /dev/vg_lab/lv_data
+~~~
 
-### Lab 14.1 — Build LVM
+Use these mutating commands only after confirming that the selected partition is the dedicated lab disk. The example assumes ext4; resizing commands differ by filesystem.
 
-```text
-Disk
- ↓
-PV
- ↓
-VG
- ↓
-LV
- ↓
-Filesystem
- ↓
-Mount
-```
+## Practical tasks
 
-### Lab 14.2 — Extend Storage
+1. Explain physical volumes, volume groups, logical volumes, physical extents, and logical extents.
+2. Build PV → VG → LV → filesystem → mount.
+3. Extend a logical volume and its filesystem.
+4. Learn snapshots and shrinking concepts without risking valuable data.
+5. Capture LVM state before and after every operation.
 
-Increase:
-
-```text
-LV
-Filesystem
-```
-
-### Lab 14.3 — LVM Snapshot
-
-Create and investigate a snapshot.
-
-### Project
-
-## Linux Dynamic Storage Lab
+**Project:** Linux Dynamic Storage Lab — demonstrate a safe volume extension and document verification and recovery.
 
 ---
 
-# Phase 15 — Swap & Memory Management
+# Phase 15 — Swap and Memory Management
 
-## Topics
+**Goal:** Inspect RAM, virtual memory, swap, and memory pressure.
 
-* RAM
-* virtual memory
-* swap
-* page cache
-* buffers
-* memory pressure
-* OOM
-* swap file
-* swap partition
-* swappiness
+## Commands
 
-### Commands
-
-```bash
-free
-swapon
-swapoff
-vmstat
+~~~bash
+free -h
+swapon --show
+vmstat 1 5
 cat /proc/meminfo
-```
+grep -E 'MemAvailable|SwapTotal|SwapFree' /proc/meminfo
+sysctl vm.swappiness
+~~~
 
-### Lab
+## Practical tasks
 
-Create a swap file.
+1. Distinguish total RAM, available memory, page cache, buffers, swap, and OOM behavior.
+2. Inspect existing swap before adding any.
+3. If required, create a small swap file in a disposable VM following Ubuntu documentation, set restrictive permissions, configure persistence, and verify with `swapon --show`.
+4. Monitor memory and swap during a controlled workload.
 
-Measure:
-
-* memory usage
-* swap usage
-* system load
-
-### Project
-
-## Linux Memory Troubleshooting Lab
+**Project:** Linux Memory Troubleshooting Lab — record baseline memory, observed pressure, evidence, and a safe remediation.
 
 ---
 
-# Phase 16 — Linux Monitoring & Observability
+# Phase 16 — Linux Monitoring and Observability
 
-## Topics
+**Goal:** Establish a resource baseline and detect abnormal behavior.
 
-* CPU monitoring
-* memory monitoring
-* disk monitoring
-* network monitoring
-* load average
-* process monitoring
-* file descriptors
-* sockets
-* system uptime
-* resource utilization
+## Commands
 
-### Commands
-
-```bash
-top
-htop
-free
+~~~bash
 uptime
-vmstat
-iostat
-sar
+top
+free -h
+vmstat 1 5
+df -hT
+df -i
+iostat -xz 1 3
 lsof
-ss
-df
-du
-```
+ss -s
+ps -eo pid,comm,%cpu,%mem --sort=-%cpu | head
+~~~
 
-### Lab
+Install `sysstat` if you need `iostat` and it is not present.
 
-Create resource exhaustion scenarios.
+## Practical tasks
 
-Investigate:
+1. Record CPU, memory, swap, disk, inode, network, load, process, socket, and file-descriptor metrics.
+2. Compare idle and workload measurements.
+3. Identify which metric supports a suspected bottleneck.
+4. Avoid claiming that high load alone proves CPU saturation; compare CPU, I/O, and process evidence.
 
-```text
-CPU
-Memory
-Disk
-Network
-Process
-```
+## Labs
 
-### Project
+- Collect a baseline.
+- Generate a controlled workload.
+- Compare metrics before, during, and after.
+- Write a short incident report with evidence and verification.
 
-## Linux Server Health Monitor
-
-Output:
-
-```text
-CPU
-RAM
-Swap
-Disk
-Load
-Network
-Processes
-Services
-Uptime
-```
+**Project:** Linux Server Health Monitor — output timestamped CPU, memory, disk, load, network, service, and uptime data.
 
 ---
 
 # Phase 17 — Linux Logging
 
-## Topics
+**Goal:** Find relevant events and correlate logs during investigation.
 
-* syslog
-* journald
-* journalctl
-* `/var/log`
-* authentication logs
-* kernel logs
-* service logs
-* application logs
-* log levels
-* log rotation
-* retention
-* centralized logging concepts
+## Commands
 
-### Commands
+~~~bash
+journalctl -b
+journalctl -p warning..alert
+journalctl -u ssh --since today
+journalctl -k
+dmesg --level=err,warn
+sudo tail -n 100 /var/log/syslog
+sudo tail -n 100 /var/log/auth.log
+~~~
 
-```bash
-journalctl
-dmesg
-tail
-grep
-less
-```
+Ubuntu log files vary by installed logging service and configuration. Check which files exist before using them.
 
-### Lab
+## Practical tasks
 
-Investigate:
+1. Distinguish journald, syslog, kernel logs, authentication logs, service logs, and application logs.
+2. Filter by service, boot, time range, and priority.
+3. Inspect log rotation and retention.
+4. Protect logs from unauthorized access and avoid collecting secrets in reports.
 
-```text
-SSH failures
-service failures
-kernel events
-network events
-authentication events
-```
-
-### Project
-
-## Linux Log Investigation Platform
-
-Create automated reports from:
-
-```text
-auth logs
-system logs
-service logs
-kernel logs
-web logs
-```
+**Project:** Linux Log Investigation Platform — create reports for authentication, system, service, kernel, and web events with timestamps and evidence.
 
 ---
 
 # Phase 18 — Bash Automation
 
-## Topics
+**Goal:** Automate repeatable administration tasks with safe error handling.
 
-* variables
-* input/output
-* conditions
-* loops
-* functions
-* arrays
-* strings
-* command substitution
-* positional arguments
-* exit codes
-* error handling
-* logging
-* debugging
-* traps
-* cron
-* scheduled tasks
+## Commands and concepts
 
-### Lab 18.1 — Bash Fundamentals
+~~~bash
+bash --version
+shellcheck --version
+chmod +x script.sh
+./script.sh
+bash -n script.sh
+printf '%s\n' "$PATH"
+crontab -l
+systemctl list-timers
+~~~
 
-Create:
+## Practical tasks
 
-```bash
-system-info.sh
-disk-check.sh
-service-check.sh
-backup.sh
-user-manager.sh
-```
+1. Learn variables, input/output, conditions, loops, functions, arrays, positional arguments, exit codes, command substitution, traps, logging, and debugging.
+2. Quote variables and validate input.
+3. Use explicit paths and safe temporary-file handling.
+4. Use cron or systemd timers based on task requirements.
+5. Test failure paths, not only successful runs.
 
-### Lab 18.2 — Cron Automation
+## Labs
 
-Automate:
+- Build `system-info.sh`, `disk-check.sh`, `service-check.sh`, and `backup.sh`.
+- Add argument validation and meaningful exit codes.
+- Run scripts manually, then schedule a non-destructive report.
+- Inspect logs and verify the scheduled execution.
 
-* backups
-* reports
-* cleanup
-* monitoring
-
-### Project
-
-## Linux Administration Toolkit
-
-```text
-linux-admin-toolkit/
-├── system-info.sh
-├── health-check.sh
-├── disk-monitor.sh
-├── service-check.sh
-├── backup.sh
-├── log-analyzer.sh
-├── user-manager.sh
-└── network-check.sh
-```
+**Project:** Linux Administration Toolkit — combine inventory, health checks, service status, and reporting with documented usage and tests.
 
 ---
 
-# Phase 19 — Linux Firewall & Security
+# Phase 19 — Linux Security Hardening
 
-## Topics
+**Goal:** Reduce attack surface and verify security controls.
 
-* Security model
-* least privilege
-* attack surface
-* UFW
-* nftables
-* netfilter
-* iptables concepts
-* ports
-* service exposure
-* SSH hardening
-* password security
-* sudo
-* ACL
-* capabilities
-* SUID
-* SGID
-* sticky bit
-* AppArmor
-* audit concepts
-* security updates
-* file integrity
-* security baseline
+## Commands
 
-### Lab 19.1 — UFW
+~~~bash
+sudo ufw status verbose
+sudo ufw app list
+sudo ss -tulpn
+sudo systemctl --type=service --state=running
+sudo apt list --upgradable
+sudo aa-status
+sudo journalctl -p warning..alert
+~~~
 
-Configure:
+## Practical tasks
 
-```text
-SSH
-HTTP
-HTTPS
-DNS
-```
+1. Review accounts, sudo access, permissions, exposed services, SSH settings, firewall rules, updates, and logs.
+2. Configure UFW in a VM console session. Allow required SSH before enabling the firewall to avoid locking yourself out.
+3. Inspect AppArmor status and profiles.
+4. Learn SELinux concepts when working with distributions that use it by default.
+5. Learn auditd, authentication controls, integrity monitoring, security baselines, and vulnerability management.
+6. Record before/after state and validate that required services remain available.
 
-### Lab 19.2 — Service Exposure
-
-Identify:
-
-```bash
-ss -tulpn
-```
-
-Then remove unnecessary exposed services.
-
-### Lab 19.3 — SSH Hardening
-
-Implement:
-
-* key authentication
-* restricted users
-* firewall
-* logging
-* configuration validation
-
-### Lab 19.4 — AppArmor
-
-Inspect:
-
-```bash
-aa-status
-```
-
-### Project
-
-# Linux Server Security Hardening
-
-Create:
-
-```text
-Before
-  ↓
-Security Assessment
-  ↓
-Hardening
-  ↓
-Verification
-  ↓
-After
-```
-
-Document:
-
-* attack surface
-* exposed ports
-* users
-* permissions
-* SSH
-* firewall
-* AppArmor
-* updates
-* logs
+**Project:** Linux Security Hardening — deliver a baseline, hardening checklist, evidence, exceptions, and rollback procedure.
 
 ---
 
 # Phase 20 — DNS Administration
 
-## Topics
+**Goal:** Understand DNS records and configure a lab DNS server.
 
-* DNS architecture
-* resolver
-* authoritative DNS
-* recursive DNS
-* caching
-* zones
-* forward zones
-* reverse zones
-* A
-* AAAA
-* CNAME
-* MX
-* TXT
-* NS
-* PTR
-* TTL
-* DNS troubleshooting
-* BIND
-* DNSSEC concepts
+## Initial investigation commands
 
-### Commands
+~~~bash
+resolvectl status
+getent hosts example.com
+dig example.com
+dig A example.com
+dig AAAA example.com
+dig MX example.com
+dig @<dns-server-ip> <lab-domain>
+~~~
 
-```bash
-dig
-nslookup
-host
-resolvectl
-```
+## Practical tasks
 
-### Lab 20.1 — Local DNS
+1. Understand resolver configuration, zones, authoritative versus recursive service, and A/AAAA/CNAME/MX/NS/PTR/TXT records.
+2. Draw the lab subnet and choose a reserved private IP for the DNS VM.
+3. Choose a DNS implementation such as BIND9 only after deciding whether the lab needs authoritative DNS, caching, or forwarding.
+4. Validate zone configuration with the appropriate tool before restarting the service.
+5. Test queries from the server and a separate client.
 
-Create:
+## Labs
 
-```text
-server01.lab.local
-server02.lab.local
-web.lab.local
-```
+- Install and inspect DNS packages.
+- Configure a private lab zone and a host record.
+- Query the record from a client.
+- Break a test record and diagnose the failure from logs and DNS responses.
 
-### Lab 20.2 — Reverse DNS
-
-Implement PTR records.
-
-### Lab 20.3 — DNS Troubleshooting
-
-Break:
-
-* zone
-* record
-* resolver
-* service
-
-Diagnose each.
-
-### Project
-
-## Linux DNS Infrastructure
+**Project:** DNS Infrastructure — document zone files, records, clients, forwarding/recursion policy, access control, and test results. Do not expose an open recursive resolver to the public internet.
 
 ---
 
 # Phase 21 — DHCP Administration
 
-## Topics
+**Goal:** Understand dynamic addressing and configure a private lab DHCP service.
 
-* DHCP
-* DORA process
-* scopes
-* leases
-* reservations
-* subnet
-* gateway
-* DNS
-* hostname assignment
-* DHCP troubleshooting
-* DHCP logging
+## Practical tasks
 
-### Lab
+1. Learn scopes, leases, reservations, exclusions, subnet masks, gateways, DNS options, and lease logs.
+2. Use an isolated virtual network. Do not start a second DHCP server on a bridged network where it could affect real clients.
+3. Choose a DHCP implementation appropriate to the lab and inspect its configuration before starting it.
+4. Verify leases and client address, route, and DNS information.
+5. Test renewal and troubleshoot a client that receives no lease.
 
-Build:
+## Commands
 
-```text
-DHCP Server
-     |
-     +---- Client01
-     +---- Client02
-     +---- Client03
-```
+~~~bash
+ip -br address
+ip route
+resolvectl status
+journalctl -u <dhcp-service-name> --since today
+~~~
 
-### Project
+Service names and client lease commands vary by DHCP implementation. Use the implementation's documented tools.
 
-## Linux DHCP Infrastructure
-
-Integrate:
-
-```text
-DHCP
-+
-DNS
-+
-SSH
-+
-Firewall
-```
+**Project:** DHCP Infrastructure — connect several lab clients on an isolated network and document the scope, reservations, options, leases, logs, and recovery.
 
 ---
 
 # Phase 22 — Web Server Administration
 
-## Topics
+**Goal:** Deploy and troubleshoot Apache and Nginx.
 
-### Apache
+## Nginx workflow
 
-* installation
-* configuration
-* virtual hosts
-* document root
-* permissions
-* logs
-* modules
+~~~bash
+sudo apt update
+sudo apt install -y nginx
+sudo nginx -t
+sudo systemctl enable --now nginx
+systemctl status nginx --no-pager
+curl -I http://127.0.0.1/
+sudo journalctl -u nginx --since today
+~~~
 
-### Nginx
+## Apache workflow
 
-* installation
-* server blocks
-* static content
-* reverse proxy
-* upstream
-* logs
-* TLS
-* headers
-* access control
+~~~bash
+sudo apt install -y apache2
+sudo apache2ctl configtest
+sudo systemctl enable --now apache2
+curl -I http://127.0.0.1/
+~~~
 
-### Lab 22.1 — Apache
+Use one web server at a time on the same IP/port unless deliberately configuring separate ports or hosts.
 
-Deploy a static website.
+## Practical tasks
 
-### Lab 22.2 — Nginx
+1. Deploy a static page.
+2. Configure a virtual host/server block and document root.
+3. Check file ownership, permissions, service status, listening sockets, and access/error logs.
+4. Configure a reverse proxy to a lab application.
+5. Learn TLS certificates, security headers, and restricted admin paths before exposing a service.
 
-Deploy:
-
-```text
-Nginx
- ↓
-Static Website
-```
-
-### Lab 22.3 — Reverse Proxy
-
-Deploy:
-
-```text
-Nginx
-  ↓
-Flask/FastAPI
-```
-
-### Project
-
-## Linux Web Server Platform
+**Project:** Linux Web Server Platform — deliver site configuration, test results, logs, firewall policy, TLS plan, and troubleshooting notes.
 
 ---
 
 # Phase 23 — Application Server Administration
 
-## Topics
+**Goal:** Run a Python application behind a web server using a managed service.
 
-* application processes
-* WSGI
-* ASGI
-* Gunicorn
-* Uvicorn
-* systemd
-* environment variables
-* application logs
-* reverse proxy
-* database connection
-* service restart
-* health checks
+## Practical tasks
 
-### Major Project
+1. Create a small Flask or FastAPI application in a virtual environment.
+2. Run it locally on a loopback address during initial testing.
+3. Configure Gunicorn for WSGI or Uvicorn for ASGI as appropriate.
+4. Use a dedicated unprivileged service account and a systemd unit.
+5. Configure Nginx as a reverse proxy.
+6. Store configuration in environment files with restrictive permissions; do not commit secrets.
+7. Add health checks, logs, backup, and service recovery.
 
-# Production-Like Python Application Server
+## Commands
 
-Architecture:
+~~~bash
+python3 --version
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install --upgrade pip
+systemctl status <app-service> --no-pager
+journalctl -u <app-service> --since today
+curl -i http://127.0.0.1:<app-port>/health
+sudo nginx -t
+~~~
 
-```text
-Client
-  |
-  v
-Nginx
-  |
-  v
-Gunicorn/Uvicorn
-  |
-  v
-Flask/FastAPI
-  |
-  v
-Database
-```
-
-Add:
-
-* systemd
-* firewall
-* logging
-* backup
-* health endpoint
-* monitoring
-* restart policy
+**Project:** Production-like Python Application Server — document the request path, service user, systemd unit, reverse proxy, logs, firewall, backup, and verification.
 
 ---
 
-# Phase 24 — File Sharing & Network Services
+# Phase 24 — File Sharing and Network Services
 
-## Topics
+**Goal:** Share files between Linux and Windows clients with controlled access.
 
-### NFS
+## Practical tasks
 
-* NFS server
-* NFS client
-* exports
-* mounts
-* permissions
-* troubleshooting
+1. Learn NFS exports and mounts, Samba/SMB shares, SFTP, rsync, and FTP's security limitations.
+2. Create a dedicated test directory and group.
+3. Configure only the protocol needed for the lab.
+4. Restrict access to the lab subnet and authorized users.
+5. Verify permissions from the client, not only on the server.
+6. Test logs and service restart behavior.
 
-### Samba
+## Commands
 
-* SMB
-* Windows interoperability
-* shares
-* users
-* permissions
-* configuration
-* troubleshooting
+~~~bash
+findmnt
+df -hT
+ss -tulpn
+getfacl /srv/lab-share
+journalctl --since today
+~~~
 
-### Other Services
+Use the service-specific validation commands for NFS or Samba after installation.
 
-* SFTP
-* rsync
-* FTP concepts
-* network shares
-
-### Lab
-
-Create:
-
-```text
-Linux Server
-     |
-     +---- NFS ---- Linux Client
-     |
-     +---- SMB ---- Windows Client
-```
-
-### Project
-
-## Linux File Server
-
-Implement:
-
-* departmental shares
-* permissions
-* access control
-* backup
-* logging
+**Project:** Linux File Server — implement departmental shares, least-privilege access, logging, and backup/restore verification.
 
 ---
 
-# Phase 25 — Backup & Recovery
+# Phase 25 — Backup and Recovery
 
-## Topics
+**Goal:** Produce backups that can be verified and restored.
 
-* backup strategy
-* full backup
-* incremental backup
-* differential backup
-* local backup
-* remote backup
-* rsync
-* tar
-* compression
-* retention
-* checksums
-* backup verification
-* restore
-* disaster recovery
-* recovery testing
-* configuration backup
+## Commands
 
-### Commands
+~~~bash
+tar -czf lab-backup.tar.gz lab-data/
+tar -tzf lab-backup.tar.gz
+sha256sum lab-backup.tar.gz
+rsync -av --dry-run lab-data/ backup-data/
+rsync -av lab-data/ backup-data/
+~~~
 
-```bash
-tar
-rsync
-sha256sum
-```
+## Practical tasks
 
-### Lab 25.1 — Local Backup
+1. Define what must be backed up, recovery point objective (RPO), recovery time objective (RTO), retention, and destination.
+2. Compare full, incremental, and differential backup concepts.
+3. Back up configuration and application data without copying volatile pseudo-filesystems.
+4. Verify archive contents and checksums.
+5. Restore to a separate directory and compare the recovered data.
+6. Schedule backups only after manual backup and restore work correctly.
 
-### Lab 25.2 — Remote Backup
-
-### Lab 25.3 — Automated Backup
-
-### Lab 25.4 — Restore
-
-Delete test data.
-
-Restore it.
-
-### Major Project
-
-# Linux Backup & Disaster Recovery System
-
-```text
-Production
-    |
-    v
-Backup Automation
-    |
-    v
-Backup Server
-    |
-    v
-Verification
-    |
-    v
-Restore Test
-```
+**Project:** Linux Backup and Disaster Recovery — demonstrate local and remote backup, retention, integrity verification, restore testing, and recovery documentation.
 
 ---
 
 # Phase 26 — Linux Troubleshooting
 
-## Topics
+**Goal:** Diagnose failures systematically instead of changing settings at random.
 
-* troubleshooting methodology
-* evidence collection
-* hypothesis
-* layer-based troubleshooting
-* boot failures
-* service failures
-* permission failures
-* storage failures
-* DNS failures
-* network failures
-* SSH failures
-* web failures
-* CPU problems
-* memory problems
-* disk problems
-* configuration problems
+## Workflow
 
-### Troubleshooting Model
+~~~text
+Identify symptom
+    ↓
+Establish scope and impact
+    ↓
+Collect read-only evidence
+    ↓
+Choose the affected layer
+    ↓
+Form and test a hypothesis
+    ↓
+Make one controlled change
+    ↓
+Verify service from the client side
+    ↓
+Document root cause and prevention
+~~~
 
-```text
-Identify
-   ↓
-Observe
-   ↓
-Collect evidence
-   ↓
-Determine affected layer
-   ↓
-Form hypothesis
-   ↓
-Test
-   ↓
-Fix
-   ↓
-Verify
-   ↓
-Document
-```
+## Commands by failure type
 
-### Labs
+~~~bash
+# Service
+systemctl status <service> --no-pager
+journalctl -u <service> --since today
 
-Create controlled failures:
+# Network
+ip -br address
+ip route
+ip neigh
+ping -c 3 <gateway-ip>
+getent hosts <hostname>
+ss -tulpn
 
-1. SSH failure
-2. DNS failure
-3. DHCP failure
-4. Nginx failure
-5. permission failure
-6. full disk
-7. broken mount
-8. high CPU
-9. high memory
-10. broken network route
-11. wrong DNS
-12. failed systemd service
+# Storage
+df -hT
+df -i
+findmnt
+lsblk -f
 
-### Major Project
+# Permissions
+namei -l /path/to/file
+stat /path/to/file
+getfacl /path/to/file
 
-# Linux Incident Response Lab
+# Resources
+uptime
+free -h
+vmstat 1 5
+ps -eo pid,stat,%cpu,%mem,cmd --sort=-%cpu | head
+~~~
 
-For every incident record:
+## Labs
 
-```text
-Incident ID
-Symptoms
-Impact
-Evidence
-Commands
-Root Cause
-Resolution
-Verification
-Prevention
-```
+Create reversible incidents in a disposable VM: SSH failure, DNS failure, wrong route, Nginx failure, permission denial, full test filesystem, broken test mount, and high CPU/memory workload.
+
+**Project:** Linux Incident Response Lab — document incident ID, symptoms, impact, commands, evidence, root cause, resolution, verification, and prevention.
 
 ---
 
 # Phase 27 — Linux Performance Engineering
 
-## Topics
+**Goal:** Use measurements to identify CPU, memory, disk, process, and network bottlenecks.
 
-* CPU bottlenecks
-* memory pressure
-* swap
-* disk I/O
-* network bottlenecks
-* load average
-* process analysis
-* file descriptors
-* socket exhaustion
-* inode exhaustion
-* disk latency
-* service latency
+## Commands
 
-### Lab
+~~~bash
+uptime
+top
+vmstat 1 10
+free -h
+iostat -xz 1 5
+df -hT
+df -i
+ss -s
+lsof
+ps -eo pid,stat,%cpu,%mem,cmd --sort=-%cpu | head
+~~~
 
-Simulate:
+## Practical tasks
 
-```text
-High CPU
-High RAM
-Disk I/O
-Full disk
-High network activity
-Too many processes
-```
+1. Establish a baseline before generating load.
+2. Run a controlled workload and capture metrics.
+3. Correlate load average with CPU, I/O wait, memory pressure, and process state.
+4. Investigate file descriptor and socket exhaustion.
+5. Compare measurements before and after a change.
 
-### Project
-
-## Linux Performance Investigation Lab
-
-Produce:
-
-```text
-Performance Baseline
-Problem
-Metrics
-Root Cause
-Optimization
-Before/After
-```
+**Project:** Linux Performance Investigation — provide baseline, symptom, metrics, root cause, optimization, and before/after evidence.
 
 ---
 
 # Phase 28 — Linux Containers
 
-## Topics
+**Goal:** Build and operate containers while understanding their isolation and security boundaries.
 
-* containers
-* images
-* Docker
-* Dockerfile
-* Docker Compose
-* container lifecycle
-* namespaces
-* cgroups
-* overlay filesystem
-* container networking
-* volumes
-* port mapping
-* container logs
-* health checks
-* restart policies
-* container security
+## Commands
 
-### Commands
-
-```bash
-docker pull
-docker run
+~~~bash
+docker version
+docker info
+docker pull nginx:stable
+docker run -d --name web-lab -p 8080:80 nginx:stable
 docker ps
-docker exec
-docker logs
-docker inspect
-docker stop
-docker start
-docker rm
-```
+docker logs web-lab
+docker inspect web-lab
+curl -I http://127.0.0.1:8080/
+docker stop web-lab
+docker rm web-lab
+~~~
 
-### Lab 28.1 — Basic Container
+Use the supported Docker installation instructions for Ubuntu; do not assume Docker is preinstalled.
 
-### Lab 28.2 — Custom Image
+## Practical tasks
 
-### Lab 28.3 — Volumes
+1. Learn images, containers, Dockerfiles, Compose, namespaces, cgroups, overlay filesystems, networks, volumes, and port mapping.
+2. Build a small image and inspect its configuration.
+3. Persist data with a named volume.
+4. Use a dedicated network and health checks where appropriate.
+5. Avoid privileged containers and unnecessary host mounts.
+6. Inspect logs, resource use, and restart policies.
 
-### Lab 28.4 — Networks
-
-### Lab 28.5 — Compose
-
-### Major Project
-
-# Containerized Linux Service Platform
-
-```text
-Nginx
-  |
-  v
-FastAPI
-  |
-  v
-Database
-```
-
-Using:
-
-```text
-Docker Compose
-```
-
-Implement:
-
-* custom network
-* volumes
-* environment configuration
-* health checks
-* logs
-* restart policies
+**Project:** Containerized Linux Service Platform — deploy a reverse proxy and application with separate networking, persistent data where required, health checks, and documented recovery.
 
 ---
 
 # Phase 29 — Linux Internals
 
-## Topics
+**Goal:** Connect user-space commands to kernel services and system behavior.
 
-* user space
-* kernel space
-* system calls
-* processes
-* threads
-* scheduling
-* virtual memory
-* page cache
-* VFS
-* inode
-* dentry
-* device drivers
-* interrupts
-* kernel modules
-* `/proc`
-* `/sys`
-* sysctl
+## Commands
 
-### Lab
+~~~bash
+uname -r
+lsmod
+modinfo <module-name>
+sysctl -a
+cat /proc/cpuinfo
+cat /proc/meminfo
+cat /proc/mounts
+strace -c ls
+strace -e trace=openat,read,write cat /etc/hostname
+~~~
 
-Trace common operations:
+## Practical tasks
 
-```text
-ls
-cat
-ping
-ssh
-```
+1. Explain user space, kernel space, system calls, processes, threads, scheduling, virtual memory, page cache, VFS, inodes, dentries, drivers, interrupts, and kernel modules.
+2. Inspect `/proc`, `/sys`, and sysctl settings.
+3. Use strace on simple, non-sensitive commands.
+4. Distinguish observing a setting from safely changing it.
 
-Understand:
-
-```text
-Application
-    ↓
-Library
-    ↓
-System Call
-    ↓
-Kernel
-    ↓
-Hardware
-```
-
-### Project
-
-## Linux System Call Investigation
-
-Document system behavior using tracing tools such as:
-
-```bash
-strace
-```
+**Project:** Linux System Call Investigation — trace a small command, identify representative system calls, and document what evidence supports each conclusion.
 
 ---
 
 # Phase 30 — Advanced Linux Networking
 
-## Topics
+**Goal:** Build isolated virtual networks and understand packet flow.
 
-* network namespaces
-* bridges
-* virtual Ethernet
-* VLAN
-* bonding
-* routing
-* policy routing
-* NAT
-* forwarding
-* firewall chains
-* nftables
-* packet filtering
-* packet capture
-* tcpdump
-* connection tracking
+## Practical tasks
 
-### Lab
+1. Learn network namespaces, veth pairs, bridges, VLANs, bonding, forwarding, NAT, policy routing, nftables, packet filtering, and connection tracking.
+2. Build namespaces and virtual interfaces in a disposable VM.
+3. Verify interface state, addresses, routes, and neighbor entries at each step.
+4. Add firewall rules incrementally and document their effect.
+5. Capture traffic with tcpdump and map it to the packet path.
 
-Build:
+## Commands
 
-```text
-Namespace A
-     |
-   Bridge
-     |
-Namespace B
-```
+~~~bash
+ip netns list
+ip link show
+ip route
+ip rule
+sudo nft list ruleset
+sudo tcpdump -ni any
+~~~
 
-### Lab
+Only run configuration commands for namespaces, bridges, NAT, or firewall rules in an isolated lab with a recovery path.
 
-Configure:
-
-* virtual interfaces
-* routing
-* NAT
-* firewall rules
-
-### Project
-
-## Linux Virtual Network Lab
-
-Document the packet path:
-
-```text
-Application
- ↓
-Socket
- ↓
-Network Namespace
- ↓
-Interface
- ↓
-Bridge
- ↓
-Firewall
- ↓
-Routing
- ↓
-Physical/Virtual NIC
-```
+**Project:** Linux Virtual Network Lab — diagram namespaces, interfaces, bridges, firewall, routes, and packet flow; include connectivity tests and rollback steps.
 
 ---
 
 # Phase 31 — Virtualization
 
-## Topics
+**Goal:** Understand Linux virtualization and manage test VMs where hardware supports it.
 
-* virtualization
-* hypervisor
-* KVM
-* QEMU
-* libvirt
-* virtual CPU
-* virtual memory
-* virtual disk
-* virtual network
-* VM lifecycle
-* snapshots
-* resource allocation
+## Practical tasks
 
-### Lab
+1. Learn hypervisors, KVM, QEMU, libvirt, virtual CPU/memory, disks, networks, snapshots, and VM lifecycle.
+2. Check whether hardware virtualization is available.
+3. Install KVM/libvirt only if the host and available resources support it.
+4. Create a small test VM and inspect its CPU, memory, disk, and network configuration.
+5. Compare VM and container isolation models.
 
-Learn:
+## Commands
 
-```text
-KVM
-QEMU
-libvirt
-virsh
-```
+~~~bash
+lscpu
+lsmod | grep kvm
+virsh list --all
+virsh net-list --all
+virsh dominfo <vm-name>
+~~~
 
-### Project
+These libvirt commands require a working libvirt setup and appropriate permissions.
 
-## Linux Virtualization Lab
-
-Create and manage:
-
-```text
-VM
-Network
-Storage
-Snapshot
-Resource allocation
-```
+**Project:** Linux Virtualization Lab — document VM creation, network, storage, resource allocation, lifecycle, and recovery.
 
 ---
 
 # Phase 32 — Cloud Linux Administration
 
-## Topics
+**Goal:** Deploy and operate a Linux instance using cloud networking and identity controls.
 
-* cloud VM
-* SSH
-* cloud networking
-* security groups
-* IAM concepts
-* block storage
-* object storage
-* DNS
-* monitoring
-* backups
-* cloud firewall
-* cloud-init
+## Practical tasks
 
-### Lab
+1. Learn cloud VMs, SSH keys, security groups, IAM concepts, block/object storage, cloud-init, DNS, monitoring, backup, and cloud firewalls.
+2. Prefer local VMs first; use a free/low-cost cloud tier only after checking current pricing and limits.
+3. Apply least privilege and restrict inbound traffic.
+4. Install a simple service, verify it remotely, and inspect logs.
+5. Test backup and recovery; delete resources when finished to avoid unexpected charges.
 
-Deploy a Linux VM in a free/low-cost cloud environment when available.
+## Commands
 
-Practice:
+~~~bash
+cloud-init status --long
+ip -br address
+ip route
+systemctl --failed
+journalctl -b
+ss -tulpn
+~~~
 
-* SSH
-* firewall
-* web server
-* logs
-* monitoring
-* backup
-
-### Project
-
-## Cloud Linux Server Deployment
-
-Document:
-
-```text
-Architecture
-Network
-Security
-Server configuration
-Monitoring
-Backup
-Recovery
-```
+**Project:** Cloud Linux Server Deployment — document architecture, network rules, identity permissions, service setup, monitoring, backup, and teardown.
 
 ---
 
 # Phase 33 — Configuration Management
 
-## Topics
+**Goal:** Configure multiple servers consistently with Ansible.
 
-* configuration drift
-* infrastructure automation
-* Ansible
-* inventory
-* playbooks
-* variables
-* templates
-* handlers
-* roles
-* idempotency
-* secrets
+## Practical tasks
 
-### Lab
+1. Install Ansible on a management VM or control host.
+2. Create an inventory for two lab servers.
+3. Configure SSH keys and verify connectivity.
+4. Write playbooks for package installation, users, SSH, firewall, and Nginx.
+5. Use handlers, variables, templates, roles, and secrets management as the project grows.
+6. Run playbooks twice and verify idempotency.
 
-Use Ansible to configure:
+## Commands
 
-```text
-Server01
-Server02
-Server03
-```
+~~~bash
+ansible --version
+ansible-inventory -i inventory.ini --list
+ansible all -i inventory.ini -m ping
+ansible-playbook -i inventory.ini site.yml --syntax-check
+ansible-playbook -i inventory.ini site.yml --check
+ansible-playbook -i inventory.ini site.yml
+~~~
 
-Automate:
+Use `--check` as a useful preview, not a guarantee that every task is fully simulated.
 
-* users
-* SSH
-* packages
-* firewall
-* Nginx
-* monitoring
-
-### Project
-
-## Linux Server Provisioning with Ansible
-
-Input:
-
-```text
-Inventory
-```
-
-Output:
-
-```text
-Configured Linux Servers
-```
+**Project:** Linux Server Provisioning with Ansible — build repeatable server setup and verify the resulting configuration.
 
 ---
 
 # Phase 34 — Linux Infrastructure Automation
 
-Combine:
+**Goal:** Combine Bash, Python, SSH, systemd, Ansible, and containers into a maintainable workflow.
 
-```text
-Bash
-+
-Python
-+
-Ansible
-+
-SSH
-+
-systemd
-+
-Docker
-```
+## Practical tasks
 
-### Project
+1. Define a server inventory and a clear configuration source.
+2. Automate health checks, package status, service status, disk use, backup status, and log collection.
+3. Use SSH keys and least-privilege accounts for remote administration.
+4. Add timeouts, input validation, logging, retries where justified, and meaningful exit codes.
+5. Keep credentials out of source control.
+6. Test partial failure and verify that automation reports failures accurately.
 
-# Linux Infrastructure Automation Platform
+## Suggested repository
 
-Features:
+~~~text
+linux-infrastructure-toolkit/
+├── README.md
+├── inventory/
+├── scripts/
+├── ansible/
+├── systemd/
+├── configs/
+├── tests/
+└── docs/
+~~~
 
-* server inventory
-* health checks
-* remote command execution
-* service status
-* package status
-* disk monitoring
-* backup status
-* log collection
-* configuration checks
+**Project:** Linux Infrastructure Automation Platform — deliver server inventory, remote health checks, configuration checks, backup status, log collection, and documented test results.
 
 ---
 
-# Phase 35 — Capstone Enterprise Linux Environment
+# Phase 35 — Enterprise Linux Capstone
 
-This is the final practical project.
+**Goal:** Build, secure, monitor, troubleshoot, and document a small multi-server environment.
 
-## Project
+## Suggested architecture
 
-# Enterprise Linux Infrastructure Lab
+~~~text
+                 Lab / Internet Gateway
+                         |
+                 Firewall / Router
+                         |
+              Private Lab Network
+                         |
+       +-----------------+-----------------+
+       |                 |                 |
+     DNS/DHCP           Web/App          File/Backup
+       |                 |                 |
+       +-----------------+-----------------+
+                         |
+                 Monitoring / Logs
+~~~
 
-Build:
+Use separate VMs or combine services only when host resources require it. Keep the environment private unless there is a specific, secured reason to expose a service.
 
-```text
-                         Internet
-                            |
-                         Firewall
-                            |
-                     Linux Gateway
-                            |
-        +-------------------+-------------------+
-        |                   |                   |
-      DNS                 DHCP                SSH
-        |                   |                   |
-        +-------------------+-------------------+
-                            |
-             +--------------+--------------+
-             |              |              |
-           Web            App           File
-          Server         Server         Server
-             |              |              |
-             +--------------+--------------+
-                            |
-                       Monitoring
-                            |
-                         Backup
-```
+## Required capabilities
 
-### Required Services
+- Linux installation, boot, filesystem, CLI, users, groups, and permissions
+- systemd services and package management
+- IP addressing, routing, DNS, DHCP, SSH, and firewall
+- Storage, filesystems, mounts, and LVM
+- Web server and a simple application service
+- File sharing where required
+- Monitoring, logging, backup, restore, and troubleshooting
+- Bash automation and Ansible
+- Docker and cloud concepts where resources permit
+- Security baseline and documented recovery plan
 
-* DNS
-* DHCP
-* SSH
-* Nginx
-* Python application
-* File sharing
-* Firewall
-* Monitoring
-* Logging
-* Backup
-* Docker
+## Required evidence
 
-### Required Administration
+For each server, commit documentation containing:
 
-* users
-* groups
-* permissions
-* ACLs
-* services
-* storage
-* LVM
-* networking
-* patching
-* security
+1. Purpose and role
+2. VM resources and network details
+3. Installation and configuration steps
+4. Commands used and their purpose
+5. Verification output or screenshots with secrets removed
+6. Firewall and access-control rules
+7. Logs and monitoring checks
+8. Backup and restore evidence
+9. One failure scenario and its recovery
+10. Known limitations and next improvements
 
-### Required Automation
-
-* Bash
-* Python
-* Ansible
-
-### Required Documentation
-
-```text
-Architecture
-IP Address Plan
-Server Inventory
-Installation
-Configuration
-Security
-Monitoring
-Backup
-Troubleshooting
-Disaster Recovery
-```
+**Final project:** Enterprise Linux Infrastructure Lab — demonstrate deployment, configuration, security, monitoring, troubleshooting, automation, recovery, and documentation from a clean snapshot.
 
 ---
 
 # Practical Project Matrix
 
-| Phase | Project                      | Main Skills              |
-| ----- | ---------------------------- | ------------------------ |
-| 0     | Linux Home Lab               | VMware, networking       |
-| 1     | System Inventory             | Linux fundamentals, Bash |
-| 2     | Boot Troubleshooting Lab     | boot, systemd            |
-| 3     | Filesystem Toolkit           | filesystem, storage      |
-| 4     | Log Analyzer                 | CLI, grep, awk, logs     |
-| 5     | Multi-User Server            | users, groups            |
-| 6     | Access Control Lab           | permissions, ACL         |
-| 7     | Process Monitor              | processes, signals       |
-| 8     | Service Health Manager       | systemd                  |
-| 9     | Patch Management             | APT, updates             |
-| 10    | Network Diagnostic Toolkit   | Linux networking         |
-| 11    | Network Configuration Lab    | Netplan, routing         |
-| 12    | Secure Remote Administration | SSH                      |
-| 13    | Storage Administration       | filesystems, mounts      |
-| 14    | Dynamic Storage Lab          | LVM                      |
-| 15    | Memory Troubleshooting       | RAM, swap                |
-| 16    | Server Health Monitor        | monitoring               |
-| 17    | Log Investigation            | journald, syslog         |
-| 18    | Admin Toolkit                | Bash automation          |
-| 19    | Server Hardening             | firewall, AppArmor       |
-| 20    | DNS Infrastructure           | BIND, DNS                |
-| 21    | DHCP Infrastructure          | DHCP                     |
-| 22    | Web Server                   | Nginx/Apache             |
-| 23    | Python App Server            | Nginx, systemd, Python   |
-| 24    | Linux File Server            | NFS/Samba                |
-| 25    | Backup & DR                  | rsync, restore           |
-| 26    | Incident Response            | troubleshooting          |
-| 27    | Performance Lab              | performance              |
-| 28    | Container Platform           | Docker                   |
-| 29    | Linux Internals              | kernel, syscalls         |
-| 30    | Virtual Network Lab          | namespaces, routing      |
-| 31    | Virtualization Lab           | KVM/QEMU                 |
-| 32    | Cloud Linux Server           | cloud                    |
-| 33    | Ansible Provisioning         | configuration management |
-| 34    | Infrastructure Automation    | Bash/Python/Ansible      |
-| 35    | Enterprise Capstone          | complete administration  |
+| Phase | Project | Main evidence |
+|---|---|---|
+| 0 | Linux Home Lab | VM layout, IP plan, baseline |
+| 1 | System Inventory Tool | Host and OS inventory |
+| 2 | Boot Troubleshooting Lab | Boot evidence and recovery |
+| 3 | Filesystem Investigation Toolkit | Metadata, mounts, links |
+| 4 | Linux Log Analyzer | Pipelines and report |
+| 5 | Multi-User Server | Accounts and groups |
+| 6 | Access Control Lab | Permission matrix and ACL tests |
+| 7 | Process Monitor | Process and resource report |
+| 8 | Service Health Manager | systemd status and logs |
+| 9 | Patch Management Report | Package/update evidence |
+| 10 | Network Diagnostic Toolkit | IP, route, DNS, sockets |
+| 11 | Network Configuration Lab | Netplan and rollback |
+| 12 | Secure Remote Administration | SSH keys and access policy |
+| 13 | Storage Administration | Disk, filesystem, fstab |
+| 14 | Dynamic Storage Lab | LVM extension |
+| 15 | Memory Troubleshooting | RAM and swap evidence |
+| 16 | Server Health Monitor | Baseline and resource report |
+| 17 | Log Investigation | Correlated events |
+| 18 | Administration Toolkit | Safe Bash scripts |
+| 19 | Security Hardening | Baseline and validation |
+| 20 | DNS Infrastructure | Zone and query tests |
+| 21 | DHCP Infrastructure | Lease and client verification |
+| 22 | Web Server Platform | Site, logs, TLS plan |
+| 23 | Python Application Server | systemd and reverse proxy |
+| 24 | Linux File Server | Client-side access tests |
+| 25 | Backup and Disaster Recovery | Restore evidence |
+| 26 | Incident Response Lab | Root-cause reports |
+| 27 | Performance Investigation | Before/after metrics |
+| 28 | Container Platform | Image, network, volume |
+| 29 | System Call Investigation | strace observations |
+| 30 | Virtual Network Lab | Packet path and routes |
+| 31 | Virtualization Lab | VM lifecycle and resources |
+| 32 | Cloud Linux Server | Secure deployment and teardown |
+| 33 | Ansible Provisioning | Repeatable playbooks |
+| 34 | Infrastructure Automation | Automated health/config checks |
+| 35 | Enterprise Capstone | Integrated infrastructure evidence |
 
 ---
 
-# Flagship Portfolio Projects
+# Lab Difficulty Levels
 
-The following projects should receive the highest documentation quality.
+- **Level 1 — Guided:** follow the setup steps and explain each command.
+- **Level 2 — Semi-guided:** receive a goal, requirements, and verification criteria; choose the commands.
+- **Level 3 — Independent:** receive only the problem and expected service behavior.
+- **Level 4 — Incident:** investigate a deliberately broken, recoverable lab with no hint about the root cause.
 
-## Project 1 — Enterprise Linux Network Infrastructure
+# Required Lab Documentation Template
 
-```text
-DNS
-DHCP
-SSH
-Firewall
-Nginx
-Routing
-Monitoring
-```
+Every major lab should include a `README.md` with:
 
----
-
-## Project 2 — Linux Backup & Disaster Recovery
-
-```text
-Backup
-Rsync
-Automation
-Retention
-Verification
-Restore
-Recovery
-```
-
----
-
-## Project 3 — Production-Like Python Application Server
-
-```text
-Nginx
-FastAPI/Flask
-Gunicorn/Uvicorn
-systemd
-Database
-Firewall
-Logging
-Backup
-```
-
----
-
-## Project 4 — Linux Security Hardening
-
-```text
-Users
-Permissions
-SSH
-Firewall
-AppArmor
-Updates
-Logging
-Service exposure
-```
-
----
-
-## Project 5 — Linux Incident Response
-
-```text
-10–15 controlled failures
-        ↓
-Investigation
-        ↓
-Root Cause
-        ↓
-Recovery
-        ↓
-Verification
-        ↓
-Documentation
-```
-
----
-
-## Project 6 — Linux Container Platform
-
-```text
-Nginx
-FastAPI
-Database
-Docker
-Compose
-Volumes
-Networks
-Health Checks
-```
-
----
-
-## Project 7 — Enterprise Linux Capstone
-
-Combine everything into one infrastructure environment.
-
----
-
-# Lab Difficulty System
-
-Every lab should be classified as:
-
-### Level 1 — Guided
-
-Follow documented instructions.
-
-```text
-Step → Command → Result
-```
-
-### Level 2 — Semi-Guided
-
-Given:
-
-```text
-Goal
-Requirements
-Expected result
-```
-
-You determine the commands.
-
-### Level 3 — Independent
-
-Only the problem is provided.
-
-Example:
-
-> Users cannot connect to the web server.
-
-You determine:
-
-* what to inspect
-* what evidence to collect
-* root cause
-* solution
-
-### Level 4 — Incident
-
-The environment is deliberately broken.
-
-You receive only:
-
-```text
-INCIDENT-014
-
-Web server unavailable.
-```
-
-You must investigate everything.
-
----
-
-# Required Evidence for Every Major Lab
-
-Each GitHub lab should contain:
-
-```text
-README.md
-```
-
-with:
-
-```text
+~~~text
 1. Objective
-2. Environment
-3. Architecture
-4. Requirements
+2. Environment and prerequisites
+3. Architecture / topology
+4. Setup
 5. Configuration
-6. Commands
-7. Expected Results
+6. Commands and purpose
+7. Expected behavior
 8. Verification
 9. Troubleshooting
-10. Security Considerations
-11. Screenshots
-12. Lessons Learned
-```
-
----
-
-# GitHub Repository Structure
-
-Recommended repository:
-
-```text
-linux-server-administration/
-│
-├── README.md
-│
-├── 00-lab-environment/
-│
-├── 01-linux-fundamentals/
-│
-├── 02-installation-and-boot/
-│
-├── 03-filesystem/
-│
-├── 04-command-line/
-│
-├── 05-users-and-groups/
-│
-├── 06-permissions/
-│
-├── 07-process-management/
-│
-├── 08-systemd/
-│
-├── 09-package-management/
-│
-├── 10-linux-networking/
-│
-├── 11-network-configuration/
-│
-├── 12-ssh/
-│
-├── 13-storage/
-│
-├── 14-lvm/
-│
-├── 15-memory-and-swap/
-│
-├── 16-monitoring/
-│
-├── 17-logging/
-│
-├── 18-bash-automation/
-│
-├── 19-linux-security/
-│
-├── 20-dns/
-│
-├── 21-dhcp/
-│
-├── 22-web-server/
-│
-├── 23-application-server/
-│
-├── 24-file-services/
-│
-├── 25-backup-recovery/
-│
-├── 26-troubleshooting/
-│
-├── 27-performance/
-│
-├── 28-docker/
-│
-├── 29-linux-internals/
-│
-├── 30-advanced-networking/
-│
-├── 31-virtualization/
-│
-├── 32-cloud-linux/
-│
-├── 33-ansible/
-│
-├── 34-infrastructure-automation/
-│
-└── projects/
-    │
-    ├── enterprise-linux-network/
-    ├── backup-disaster-recovery/
-    ├── python-application-server/
-    ├── linux-security-hardening/
-    ├── linux-incident-response/
-    ├── container-platform/
-    └── enterprise-linux-capstone/
-```
-
----
+10. Security considerations
+11. Cleanup / rollback
+12. Evidence and lessons learned
+~~~
 
 # Final Competency Checklist
 
-## Linux Fundamentals
+## Fundamentals and system administration
 
-* [ ] Linux architecture
-* [ ] Kernel
-* [ ] Distribution
-* [ ] Boot process
-* [ ] systemd
-* [ ] filesystem hierarchy
+- [ ] Identify Linux distribution, kernel, boot flow, and systemd
+- [ ] Navigate the filesystem and inspect metadata, inodes, and mounts
+- [ ] Use Bash, pipes, redirection, grep, find, sed, awk, and exit codes
+- [ ] Manage users, groups, permissions, ACLs, and capabilities
+- [ ] Inspect processes and manage systemd services
+- [ ] Manage packages, updates, logs, and monitoring
 
-## CLI
+## Networking and services
 
-* [ ] Bash
-* [ ] pipes
-* [ ] redirection
-* [ ] grep
-* [ ] find
-* [ ] sed
-* [ ] awk
-* [ ] xargs
-* [ ] command substitution
-* [ ] exit codes
+- [ ] Diagnose interface, IP, route, gateway, DNS, and application connectivity
+- [ ] Configure Netplan safely and verify rollback
+- [ ] Administer SSH with key authentication
+- [ ] Understand TCP/UDP, sockets, packet capture, and network namespaces
+- [ ] Deploy DNS/DHCP, web, application, and file services in a private lab
+- [ ] Configure firewall rules without locking out administrative access
 
-## System Administration
+## Storage and reliability
 
-* [ ] users
-* [ ] groups
-* [ ] permissions
-* [ ] ACL
-* [ ] processes
-* [ ] services
-* [ ] packages
-* [ ] logs
-* [ ] monitoring
+- [ ] Partition and mount a test disk
+- [ ] Configure and validate persistent mounts
+- [ ] Create and extend LVM volumes
+- [ ] Inspect memory, swap, disk, inode, and I/O pressure
+- [ ] Create backups, verify integrity, and restore data
+- [ ] Troubleshoot failures using evidence and verify recovery
 
-## Networking
+## Security and modern infrastructure
 
-* [ ] IP addressing
-* [ ] routing
-* [ ] DNS
-* [ ] DHCP
-* [ ] TCP/UDP
-* [ ] ports
-* [ ] sockets
-* [ ] SSH
-* [ ] tcpdump
-* [ ] network troubleshooting
-
-## Storage
-
-* [ ] partitions
-* [ ] filesystems
-* [ ] mounting
-* [ ] fstab
-* [ ] LVM
-* [ ] swap
-* [ ] disk troubleshooting
-* [ ] storage monitoring
-
-## Security
-
-* [ ] least privilege
-* [ ] sudo
-* [ ] permissions
-* [ ] ACL
-* [ ] capabilities
-* [ ] SSH hardening
-* [ ] firewall
-* [ ] AppArmor
-* [ ] patching
-* [ ] logging
-* [ ] security baseline
-
-## Services
-
-* [ ] DNS
-* [ ] DHCP
-* [ ] Nginx
-* [ ] Apache
-* [ ] SSH
-* [ ] NFS
-* [ ] Samba
-* [ ] Python application server
-
-## Automation
-
-* [ ] Bash
-* [ ] cron
-* [ ] Python
-* [ ] SSH automation
-* [ ] Ansible
-
-## Reliability
-
-* [ ] monitoring
-* [ ] logging
-* [ ] backup
-* [ ] restore
-* [ ] disaster recovery
-* [ ] troubleshooting
-* [ ] performance analysis
-
-## Modern Infrastructure
-
-* [ ] Docker
-* [ ] Docker Compose
-* [ ] containers
-* [ ] namespaces
-* [ ] cgroups
-* [ ] KVM
-* [ ] QEMU
-* [ ] cloud Linux
-
----
+- [ ] Apply least privilege and a Linux hardening baseline
+- [ ] Inspect logs and authentication events
+- [ ] Write safe, tested Bash automation
+- [ ] Operate containers with appropriate isolation
+- [ ] Understand Linux internals and advanced networking concepts
+- [ ] Deploy a VM or cloud instance securely
+- [ ] Configure multiple lab servers with Ansible
+- [ ] Complete and document the enterprise capstone
 
 # Final Learning Progression
 
-```text
-Linux Fundamentals
-        ↓
-Filesystem + CLI
-        ↓
-Users + Permissions
-        ↓
-Processes + systemd
-        ↓
-Package Management
-        ↓
-Networking
-        ↓
-SSH
-        ↓
-Storage + LVM
-        ↓
-Monitoring + Logging
-        ↓
-Bash Automation
-        ↓
-Firewall + Security
-        ↓
-DNS + DHCP
-        ↓
-Web + Application Services
-        ↓
-Backup + Recovery
-        ↓
-Troubleshooting
-        ↓
-Performance
-        ↓
-Docker
-        ↓
-Linux Internals
-        ↓
-Advanced Networking
-        ↓
-Virtualization
-        ↓
-Cloud Linux
-        ↓
-Ansible
-        ↓
-Infrastructure Automation
-        ↓
-Enterprise Linux Capstone
-```
+~~~text
+Lab Foundation
+  → Linux Fundamentals
+  → Installation and Boot
+  → Filesystem and CLI
+  → Users and Permissions
+  → Processes and systemd
+  → Packages
+  → Networking and SSH
+  → Storage and LVM
+  → Memory, Monitoring, and Logging
+  → Bash Automation
+  → Security
+  → DNS and DHCP
+  → Web, Application, and File Services
+  → Backup and Recovery
+  → Troubleshooting and Performance
+  → Containers and Linux Internals
+  → Advanced Networking and Virtualization
+  → Cloud Linux
+  → Ansible and Infrastructure Automation
+  → Enterprise Capstone
+~~~
 
----
+## Completion criteria
 
-# The Real Completion Criteria
+A topic is complete when you can:
 
-Do not mark a topic complete because you watched a video.
+**Explain it → Set it up → Configure it → Verify it → Troubleshoot it → Secure it → Automate it where appropriate → Document it.**
 
-Mark it complete when you can:
-
-```text
-Explain it
-    ↓
-Configure it
-    ↓
-Verify it
-    ↓
-Break it
-    ↓
-Troubleshoot it
-    ↓
-Secure it
-    ↓
-Automate it
-    ↓
-Document it
-```
-
-The final objective is:
-
-> **Deploy → Configure → Secure → Monitor → Troubleshoot → Automate → Recover → Document a Linux server independently.**
-
-That is the practical competency this roadmap is designed to build.
+The target competency is to **deploy, configure, secure, monitor, troubleshoot, automate, recover, and document a Linux server independently**.
