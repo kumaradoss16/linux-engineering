@@ -8,19 +8,8 @@ Both are useful for Linux system administration, application deployments, config
 
 A hard link is an additional name for the same underlying file data. The original filename and the hard-link filename point to the same inode.
 
-HARD LINK STRUCTURE
+<img width="593" height="300" alt="image" src="https://github.com/user-attachments/assets/fe43bd9b-f6cb-4786-bfd3-446016409f31" />
 
-Directory entries
-
-`report.txt`
-
-`report-backup.txt`
-
-Same inode
-
-Same file data and metadata
-
-Deleting one filename does not remove the data while another hard link still exists.
 
 ### Example: Create a hard link
 
@@ -105,17 +94,8 @@ Real-world relevance: Hard links can provide multiple names for the same file wi
 
 A symbolic link is a separate filesystem object that stores a path to another file or directory. It behaves similarly to a shortcut, but it is implemented as a filesystem link.
 
-SYMLINK STRUCTURE
+<img width="597" height="292" alt="image" src="https://github.com/user-attachments/assets/6c9f23f6-f7bc-4bac-9d0b-c10450569b5e" />
 
-`report-link.txt`
-
-Symlink: stores a target path
-
-`report.txt`
-
-Target file and its own inode
-
-A symlink has its own inode. Its target may be a file or directory, and the target may not exist.
 
 ### Example: Create a symbolic link
 
