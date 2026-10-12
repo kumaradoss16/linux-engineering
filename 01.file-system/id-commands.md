@@ -24,7 +24,7 @@ uid=1000(hytrel) gid=1000(hytrel) groups=1000(hytrel),4(adm),24(cdrom),27(sudo),
 
 ## 2. Understand UID and GID
 
-### UID — User ID
+### UID - User ID
 
 ```
 id -u
@@ -38,7 +38,7 @@ Example output:
 
 The kernel uses the UID to identify the user. On Ubuntu systems, ordinary users often start at UID `1000`, although configuration can vary.
 
-### GID — Primary Group ID
+### GID - Primary Group ID
 
 ```
 id -g
@@ -90,7 +90,7 @@ Because your account belongs to `adm`, its group membership may allow you to rea
 
 Two memberships are particularly important.
 
-`sudo` — Your account may be able to execute authorized administrative commands, for example:
+`sudo` - Your account may be able to execute authorized administrative commands, for example:
 
 ```
 sudo apt update
@@ -98,7 +98,7 @@ sudo apt update
 
 Membership alone does not guarantee unrestricted sudo access; the configured sudo policy determines which commands are allowed.
 
-`lxd` — Membership can be security-sensitive. Depending on the LXD setup, users who can administer containers may be able to obtain elevated access to the host. Only trusted users should receive this privilege.
+`lxd` - Membership can be security-sensitive. Depending on the LXD setup, users who can administer containers may be able to obtain elevated access to the host. Only trusted users should receive this privilege.
 
 You can inspect the relevant groups with:
 
