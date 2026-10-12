@@ -47,7 +47,7 @@ The examples are system-dependent; your Ubuntu Server may have different devices
 
 Run this lab in your home directory. It creates temporary objects inside a dedicated practice directory.
 
-### Step 1 — Create a regular file and directory
+### Step 1 - Create a regular file and directory
 
 ```
 mkdir -p ~/linux-filesystem-labs/file-types
@@ -57,7 +57,7 @@ echo "Linux file types practice" > example.txt
 mkdir documents
 ```
 
-### Step 2 — Create a symbolic link
+### Step 2 - Create a symbolic link
 
 ```
 ln -s example.txt example-link
@@ -76,7 +76,7 @@ Expected target:
 example.txt
 ```
 
-### Step 3 — Create a named pipe
+### Step 3 - Create a named pipe
 
 ```
 mkfifo message-pipe
@@ -93,7 +93,7 @@ The `ls -l` permissions should begin with `p`.
 
 A named pipe can be used for communication between processes. Reading from it may block until a writer supplies data, so do not run a blocking read casually in a terminal.
 
-### Step 4 — Inspect device files
+### Step 4 - Inspect device files
 
 ```
 ls -l /dev/null
@@ -117,7 +117,7 @@ echo "This output is discarded" > /dev/null
 
 The text is sent to `/dev/null` rather than displayed or saved as a normal file.
 
-### Step 5 — Identify file types with `file` and `stat`
+### Step 5 - Identify file types with `file` and `stat`
 
 ```
 file example.txt
