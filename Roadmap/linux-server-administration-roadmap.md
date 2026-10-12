@@ -39,7 +39,7 @@ The goal is to become capable of:
 - Linux Support Engineer
 - Junior DevOps Engineer
 - Cloud Support Engineer
-- Security Engineer — Linux/Infrastructure focused
+- Security Engineer - Linux/Infrastructure focused
 
 ---
 
@@ -129,7 +129,7 @@ A topic is considered learned only when you can perform the task without followi
 
 ---
 
-# Phase 0 — Linux Lab Foundation
+# Phase 0 - Linux Lab Foundation
 
 ## Topics
 
@@ -165,7 +165,7 @@ Understand:
 - SSH
 - Web services
 
-### Lab 0.1 — Build Ubuntu Server
+### Lab 0.1 - Build Ubuntu Server
 
 Tasks:
 
@@ -178,7 +178,7 @@ Tasks:
 - Connect remotely
 - Create VM snapshot
 
-### Lab 0.2 — Build Multi-VM Network
+### Lab 0.2 - Build Multi-VM Network
 
 Create:
 
@@ -212,7 +212,7 @@ Document:
 
 ---
 
-# Phase 1 — Linux Fundamentals
+# Phase 1 - Linux Fundamentals
 
 ## Topics
 
@@ -270,7 +270,7 @@ Understand:
 - Filesystem similarities
 - Administration differences
 
-### Lab 1.1 — Linux System Identification
+### Lab 1.1 - Linux System Identification
 
 Commands:
 
@@ -290,7 +290,7 @@ Collect:
 - hostname
 - uptime
 
-### Lab 1.2 — Linux Architecture Investigation
+### Lab 1.2 - Linux Architecture Investigation
 
 Investigate:
 
@@ -330,7 +330,7 @@ Running services
 
 ---
 
-# Phase 2 — Linux Installation & Boot
+# Phase 2 - Linux Installation & Boot
 
 ## Topics
 
@@ -352,7 +352,7 @@ Running services
 - kernel parameters
 - boot logs
 
-### Lab 2.1 — Linux Installation
+### Lab 2.1 - Linux Installation
 
 Install Ubuntu Server manually.
 
@@ -365,7 +365,7 @@ Document:
 - SSH
 - packages
 
-### Lab 2.2 — Boot Investigation
+### Lab 2.2 - Boot Investigation
 
 Investigate:
 
@@ -376,7 +376,7 @@ journalctl -b
 journalctl -k
 ```
 
-### Lab 2.3 — Boot Failure Recovery
+### Lab 2.3 - Boot Failure Recovery
 
 Create controlled failures using VM snapshots.
 
@@ -402,7 +402,7 @@ Document at least:
 
 ---
 
-# Phase 3 — Linux Filesystem
+# Phase 3 - Linux Filesystem
 
 ## Topics
 
@@ -468,7 +468,7 @@ Master:
 - inode
 - file type
 
-### Lab 3.1 — Filesystem Investigation
+### Lab 3.1 - Filesystem Investigation
 
 Investigate:
 
@@ -481,7 +481,7 @@ du
 find
 ```
 
-### Lab 3.2 — Inode Investigation
+### Lab 3.2 - Inode Investigation
 
 Compare:
 
@@ -489,7 +489,7 @@ Compare:
 - hard link
 - symbolic link
 
-### Lab 3.3 — `/proc` Investigation
+### Lab 3.3 - `/proc` Investigation
 
 Inspect:
 
@@ -517,7 +517,7 @@ Build a script that reports:
 
 ---
 
-# Phase 4 — Linux Command Line
+# Phase 4 - Linux Command Line
 
 ## Topics
 
@@ -572,7 +572,7 @@ file
 stat
 ```
 
-### Lab 4.1 — Command Pipeline
+### Lab 4.1 - Command Pipeline
 
 Build pipelines that:
 
@@ -582,7 +582,7 @@ Build pipelines that:
 - sort results
 - generate reports
 
-### Lab 4.2 — Redirection
+### Lab 4.2 - Redirection
 
 Practice:
 
@@ -596,7 +596,7 @@ Practice:
 |
 ```
 
-### Lab 4.3 — Log Analysis
+### Lab 4.3 - Log Analysis
 
 Analyze:
 
@@ -629,7 +629,7 @@ Time distribution
 
 ---
 
-# Phase 5 — Users & Groups
+# Phase 5 - Users & Groups
 
 ## Topics
 
@@ -671,7 +671,7 @@ groupmod
 groupdel
 ```
 
-### Lab 5.1 — Company Users
+### Lab 5.1 - Company Users
 
 Create:
 
@@ -684,7 +684,7 @@ support01
 backup01
 ```
 
-### Lab 5.2 — Department Groups
+### Lab 5.2 - Department Groups
 
 Create:
 
@@ -696,7 +696,7 @@ management
 backup
 ```
 
-### Lab 5.3 — User Lifecycle
+### Lab 5.3 - User Lifecycle
 
 Practice:
 
@@ -717,7 +717,7 @@ Simulate a company environment with departmental users and groups.
 
 ---
 
-# Phase 6 — Linux Permissions & Access Control
+# Phase 6 - Linux Permissions & Access Control
 
 ## Topics
 
@@ -752,7 +752,7 @@ getcap
 setcap
 ```
 
-### Lab 6.1 — Permission Matrix
+### Lab 6.1 - Permission Matrix
 
 Create:
 
@@ -766,7 +766,7 @@ Shared
 
 Apply different permissions.
 
-### Lab 6.2 — Shared Directory
+### Lab 6.2 - Shared Directory
 
 Implement:
 
@@ -775,11 +775,11 @@ Department → read/write
 Other users → no access
 ```
 
-### Lab 6.3 — ACL
+### Lab 6.3 - ACL
 
 Create different permissions for individual users.
 
-### Lab 6.4 — SUID/SGID/Sticky Bit
+### Lab 6.4 - SUID/SGID/Sticky Bit
 
 Investigate real-world use cases.
 
@@ -797,7 +797,7 @@ Document:
 
 ---
 
-# Phase 7 — Processes & Job Management
+# Phase 7 - Processes & Job Management
 
 ## Topics
 
@@ -837,7 +837,7 @@ nice
 renice
 ```
 
-### Lab 7.1 — Process Investigation
+### Lab 7.1 - Process Investigation
 
 Identify:
 
@@ -848,7 +848,7 @@ Identify:
 - command
 - process state
 
-### Lab 7.2 — Signal Management
+### Lab 7.2 - Signal Management
 
 Practice:
 
@@ -860,7 +860,7 @@ SIGSTOP
 SIGCONT
 ```
 
-### Lab 7.3 — High CPU Simulation
+### Lab 7.3 - High CPU Simulation
 
 Create a controlled CPU workload.
 
@@ -880,7 +880,7 @@ Detect:
 
 ---
 
-# Phase 8 — systemd & Service Management
+# Phase 8 - systemd & Service Management
 
 ## Topics
 
@@ -910,7 +910,7 @@ journalctl
 systemd-analyze
 ```
 
-### Lab 8.1 — Service Lifecycle
+### Lab 8.1 - Service Lifecycle
 
 Practice:
 
@@ -924,11 +924,11 @@ mask
 unmask
 ```
 
-### Lab 8.2 — Create Custom Service
+### Lab 8.2 - Create Custom Service
 
 Create a systemd service for your own script.
 
-### Lab 8.3 — Service Failure
+### Lab 8.3 - Service Failure
 
 Break a service configuration and troubleshoot it.
 
@@ -956,7 +956,7 @@ Automatically:
 
 ---
 
-# Phase 9 — Package Management
+# Phase 9 - Package Management
 
 ## Topics
 
@@ -987,15 +987,15 @@ dpkg
 snap
 ```
 
-### Lab 9.1 — Package Lifecycle
+### Lab 9.1 - Package Lifecycle
 
 Install, inspect, update and remove packages.
 
-### Lab 9.2 — Broken Package Recovery
+### Lab 9.2 - Broken Package Recovery
 
 Create a controlled package/configuration problem and recover it.
 
-### Lab 9.3 — Patch Management
+### Lab 9.3 - Patch Management
 
 Create an update report.
 
@@ -1015,7 +1015,7 @@ Last update
 
 ---
 
-# Phase 10 — Linux Networking Fundamentals
+# Phase 10 - Linux Networking Fundamentals
 
 ## Topics
 
@@ -1052,7 +1052,7 @@ resolvectl
 hostnamectl
 ```
 
-### Lab 10.1 — Interface Investigation
+### Lab 10.1 - Interface Investigation
 
 Identify:
 
@@ -1063,7 +1063,7 @@ Identify:
 - gateway
 - DNS
 
-### Lab 10.2 — Routing Investigation
+### Lab 10.2 - Routing Investigation
 
 Inspect:
 
@@ -1071,7 +1071,7 @@ Inspect:
 ip route
 ```
 
-### Lab 10.3 — Socket Investigation
+### Lab 10.3 - Socket Investigation
 
 Use:
 
@@ -1079,7 +1079,7 @@ Use:
 ss -tulpn
 ```
 
-### Lab 10.4 — Packet Capture
+### Lab 10.4 - Packet Capture
 
 Use:
 
@@ -1109,7 +1109,7 @@ Routing check
 
 ---
 
-# Phase 11 — Linux Network Configuration
+# Phase 11 - Linux Network Configuration
 
 ## Topics
 
@@ -1129,15 +1129,15 @@ Routing check
 - IPv4
 - IPv6
 
-### Lab 11.1 — Static Network
+### Lab 11.1 - Static Network
 
 Configure static addressing.
 
-### Lab 11.2 — DHCP
+### Lab 11.2 - DHCP
 
 Configure DHCP client.
 
-### Lab 11.3 — Network Failure
+### Lab 11.3 - Network Failure
 
 Break:
 
@@ -1148,7 +1148,7 @@ Break:
 
 Troubleshoot each independently.
 
-### Lab 11.4 — Network Namespace
+### Lab 11.4 - Network Namespace
 
 Create isolated network namespaces.
 
@@ -1168,7 +1168,7 @@ Troubleshooting procedure
 
 ---
 
-# Phase 12 — SSH Remote Administration
+# Phase 12 - SSH Remote Administration
 
 ## Topics
 
@@ -1193,15 +1193,15 @@ Troubleshooting procedure
 - agent forwarding
 - remote commands
 
-### Lab 12.1 — SSH Server
+### Lab 12.1 - SSH Server
 
 Configure and test OpenSSH.
 
-### Lab 12.2 — Key Authentication
+### Lab 12.2 - Key Authentication
 
 Disable password authentication in a controlled lab.
 
-### Lab 12.3 — Secure File Transfer
+### Lab 12.3 - Secure File Transfer
 
 Use:
 
@@ -1211,7 +1211,7 @@ sftp
 rsync
 ```
 
-### Lab 12.4 — SSH Troubleshooting
+### Lab 12.4 - SSH Troubleshooting
 
 Investigate:
 
@@ -1239,7 +1239,7 @@ Administrator
 
 ---
 
-# Phase 13 — Linux Storage & Filesystems
+# Phase 13 - Linux Storage & Filesystems
 
 ## Topics
 
@@ -1281,7 +1281,7 @@ du
 fsck
 ```
 
-### Lab 13.1 — Additional Virtual Disk
+### Lab 13.1 - Additional Virtual Disk
 
 Attach a virtual disk.
 
@@ -1295,11 +1295,11 @@ Unmount
 Persistent mount
 ```
 
-### Lab 13.2 — `/etc/fstab`
+### Lab 13.2 - `/etc/fstab`
 
 Configure persistent storage using UUID.
 
-### Lab 13.3 — Disk Full Simulation
+### Lab 13.3 - Disk Full Simulation
 
 Create a controlled disk-full condition.
 
@@ -1318,7 +1318,7 @@ deleted-but-open files
 
 ---
 
-# Phase 14 — LVM
+# Phase 14 - LVM
 
 ## Topics
 
@@ -1346,7 +1346,7 @@ lvextend
 lvreduce
 ```
 
-### Lab 14.1 — Build LVM
+### Lab 14.1 - Build LVM
 
 ```text
 Disk
@@ -1362,7 +1362,7 @@ Filesystem
 Mount
 ```
 
-### Lab 14.2 — Extend Storage
+### Lab 14.2 - Extend Storage
 
 Increase:
 
@@ -1371,7 +1371,7 @@ LV
 Filesystem
 ```
 
-### Lab 14.3 — LVM Snapshot
+### Lab 14.3 - LVM Snapshot
 
 Create and investigate a snapshot.
 
@@ -1381,7 +1381,7 @@ Create and investigate a snapshot.
 
 ---
 
-# Phase 15 — Swap & Memory Management
+# Phase 15 - Swap & Memory Management
 
 ## Topics
 
@@ -1422,7 +1422,7 @@ Measure:
 
 ---
 
-# Phase 16 — Linux Monitoring & Observability
+# Phase 16 - Linux Monitoring & Observability
 
 ## Topics
 
@@ -1487,7 +1487,7 @@ Uptime
 
 ---
 
-# Phase 17 — Linux Logging
+# Phase 17 - Linux Logging
 
 ## Topics
 
@@ -1542,7 +1542,7 @@ web logs
 
 ---
 
-# Phase 18 — Bash Automation
+# Phase 18 - Bash Automation
 
 ## Topics
 
@@ -1563,7 +1563,7 @@ web logs
 - cron
 - scheduled tasks
 
-### Lab 18.1 — Bash Fundamentals
+### Lab 18.1 - Bash Fundamentals
 
 Create:
 
@@ -1575,7 +1575,7 @@ backup.sh
 user-manager.sh
 ```
 
-### Lab 18.2 — Cron Automation
+### Lab 18.2 - Cron Automation
 
 Automate:
 
@@ -1602,7 +1602,7 @@ linux-admin-toolkit/
 
 ---
 
-# Phase 19 — Linux Firewall & Security
+# Phase 19 - Linux Firewall & Security
 
 ## Topics
 
@@ -1629,7 +1629,7 @@ linux-admin-toolkit/
 - file integrity
 - security baseline
 
-### Lab 19.1 — UFW
+### Lab 19.1 - UFW
 
 Configure:
 
@@ -1640,7 +1640,7 @@ HTTPS
 DNS
 ```
 
-### Lab 19.2 — Service Exposure
+### Lab 19.2 - Service Exposure
 
 Identify:
 
@@ -1650,7 +1650,7 @@ ss -tulpn
 
 Then remove unnecessary exposed services.
 
-### Lab 19.3 — SSH Hardening
+### Lab 19.3 - SSH Hardening
 
 Implement:
 
@@ -1660,7 +1660,7 @@ Implement:
 - logging
 - configuration validation
 
-### Lab 19.4 — AppArmor
+### Lab 19.4 - AppArmor
 
 Inspect:
 
@@ -1700,7 +1700,7 @@ Document:
 
 ---
 
-# Phase 20 — DNS Administration
+# Phase 20 - DNS Administration
 
 ## Topics
 
@@ -1733,7 +1733,7 @@ host
 resolvectl
 ```
 
-### Lab 20.1 — Local DNS
+### Lab 20.1 - Local DNS
 
 Create:
 
@@ -1743,11 +1743,11 @@ server02.lab.local
 web.lab.local
 ```
 
-### Lab 20.2 — Reverse DNS
+### Lab 20.2 - Reverse DNS
 
 Implement PTR records.
 
-### Lab 20.3 — DNS Troubleshooting
+### Lab 20.3 - DNS Troubleshooting
 
 Break:
 
@@ -1764,7 +1764,7 @@ Diagnose each.
 
 ---
 
-# Phase 21 — DHCP Administration
+# Phase 21 - DHCP Administration
 
 ## Topics
 
@@ -1810,7 +1810,7 @@ Firewall
 
 ---
 
-# Phase 22 — Web Server Administration
+# Phase 22 - Web Server Administration
 
 ## Topics
 
@@ -1836,11 +1836,11 @@ Firewall
 - headers
 - access control
 
-### Lab 22.1 — Apache
+### Lab 22.1 - Apache
 
 Deploy a static website.
 
-### Lab 22.2 — Nginx
+### Lab 22.2 - Nginx
 
 Deploy:
 
@@ -1850,7 +1850,7 @@ Nginx
 Static Website
 ```
 
-### Lab 22.3 — Reverse Proxy
+### Lab 22.3 - Reverse Proxy
 
 Deploy:
 
@@ -1866,7 +1866,7 @@ Flask/FastAPI
 
 ---
 
-# Phase 23 — Application Server Administration
+# Phase 23 - Application Server Administration
 
 ## Topics
 
@@ -1917,7 +1917,7 @@ Add:
 
 ---
 
-# Phase 24 — File Sharing & Network Services
+# Phase 24 - File Sharing & Network Services
 
 ## Topics
 
@@ -1973,7 +1973,7 @@ Implement:
 
 ---
 
-# Phase 25 — Backup & Recovery
+# Phase 25 - Backup & Recovery
 
 ## Topics
 
@@ -2002,13 +2002,13 @@ rsync
 sha256sum
 ```
 
-### Lab 25.1 — Local Backup
+### Lab 25.1 - Local Backup
 
-### Lab 25.2 — Remote Backup
+### Lab 25.2 - Remote Backup
 
-### Lab 25.3 — Automated Backup
+### Lab 25.3 - Automated Backup
 
-### Lab 25.4 — Restore
+### Lab 25.4 - Restore
 
 Delete test data.
 
@@ -2036,7 +2036,7 @@ Restore Test
 
 ---
 
-# Phase 26 — Linux Troubleshooting
+# Phase 26 - Linux Troubleshooting
 
 ## Topics
 
@@ -2116,7 +2116,7 @@ Prevention
 
 ---
 
-# Phase 27 — Linux Performance Engineering
+# Phase 27 - Linux Performance Engineering
 
 ## Topics
 
@@ -2163,7 +2163,7 @@ Before/After
 
 ---
 
-# Phase 28 — Linux Containers
+# Phase 28 - Linux Containers
 
 ## Topics
 
@@ -2198,15 +2198,15 @@ docker start
 docker rm
 ```
 
-### Lab 28.1 — Basic Container
+### Lab 28.1 - Basic Container
 
-### Lab 28.2 — Custom Image
+### Lab 28.2 - Custom Image
 
-### Lab 28.3 — Volumes
+### Lab 28.3 - Volumes
 
-### Lab 28.4 — Networks
+### Lab 28.4 - Networks
 
-### Lab 28.5 — Compose
+### Lab 28.5 - Compose
 
 ### Major Project
 
@@ -2239,7 +2239,7 @@ Implement:
 
 ---
 
-# Phase 29 — Linux Internals
+# Phase 29 - Linux Internals
 
 ## Topics
 
@@ -2298,7 +2298,7 @@ strace
 
 ---
 
-# Phase 30 — Advanced Linux Networking
+# Phase 30 - Advanced Linux Networking
 
 ## Topics
 
@@ -2365,7 +2365,7 @@ Physical/Virtual NIC
 
 ---
 
-# Phase 31 — Virtualization
+# Phase 31 - Virtualization
 
 ## Topics
 
@@ -2409,7 +2409,7 @@ Resource allocation
 
 ---
 
-# Phase 32 — Cloud Linux Administration
+# Phase 32 - Cloud Linux Administration
 
 ## Topics
 
@@ -2457,7 +2457,7 @@ Recovery
 
 ---
 
-# Phase 33 — Configuration Management
+# Phase 33 - Configuration Management
 
 ## Topics
 
@@ -2510,7 +2510,7 @@ Configured Linux Servers
 
 ---
 
-# Phase 34 — Linux Infrastructure Automation
+# Phase 34 - Linux Infrastructure Automation
 
 Combine:
 
@@ -2546,7 +2546,7 @@ Features:
 
 ---
 
-# Phase 35 — Capstone Enterprise Linux Environment
+# Phase 35 - Capstone Enterprise Linux Environment
 
 This is the final practical project.
 
@@ -2678,7 +2678,7 @@ Disaster Recovery
 
 The following projects should receive the highest documentation quality.
 
-## Project 1 — Enterprise Linux Network Infrastructure
+## Project 1 - Enterprise Linux Network Infrastructure
 
 ```text
 DNS
@@ -2692,7 +2692,7 @@ Monitoring
 
 ---
 
-## Project 2 — Linux Backup & Disaster Recovery
+## Project 2 - Linux Backup & Disaster Recovery
 
 ```text
 Backup
@@ -2706,7 +2706,7 @@ Recovery
 
 ---
 
-## Project 3 — Production-Like Python Application Server
+## Project 3 - Production-Like Python Application Server
 
 ```text
 Nginx
@@ -2721,7 +2721,7 @@ Backup
 
 ---
 
-## Project 4 — Linux Security Hardening
+## Project 4 - Linux Security Hardening
 
 ```text
 Users
@@ -2736,7 +2736,7 @@ Service exposure
 
 ---
 
-## Project 5 — Linux Incident Response
+## Project 5 - Linux Incident Response
 
 ```text
 10–15 controlled failures
@@ -2754,7 +2754,7 @@ Documentation
 
 ---
 
-## Project 6 — Linux Container Platform
+## Project 6 - Linux Container Platform
 
 ```text
 Nginx
@@ -2769,7 +2769,7 @@ Health Checks
 
 ---
 
-## Project 7 — Enterprise Linux Capstone
+## Project 7 - Enterprise Linux Capstone
 
 Combine everything into one infrastructure environment.
 
@@ -2779,7 +2779,7 @@ Combine everything into one infrastructure environment.
 
 Every lab should be classified as:
 
-### Level 1 — Guided
+### Level 1 - Guided
 
 Follow documented instructions.
 
@@ -2787,7 +2787,7 @@ Follow documented instructions.
 Step → Command → Result
 ```
 
-### Level 2 — Semi-Guided
+### Level 2 - Semi-Guided
 
 Given:
 
@@ -2799,7 +2799,7 @@ Expected result
 
 You determine the commands.
 
-### Level 3 — Independent
+### Level 3 - Independent
 
 Only the problem is provided.
 
@@ -2814,7 +2814,7 @@ You determine:
 - root cause
 - solution
 
-### Level 4 — Incident
+### Level 4 - Incident
 
 The environment is deliberately broken.
 
