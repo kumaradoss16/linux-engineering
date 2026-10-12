@@ -42,4 +42,17 @@ Linux Ubuntu-Server 6.8.0-146-generic #146-Ubuntu SMP PREEMPT_DYNAMIC Thu Sep  3
 | `lscpu`               | CPU architecture, cores, threads, and processor details    |
 | `uptime`              | How long the system has been running and its load averages |
 
+### Useful uname options
+| Command    | Purpose                                                  |
+| ---------- | -------------------------------------------------------- |
+| `uname -a` | Display all available identification information         |
+| `uname -s` | Display the kernel name                                  |
+| `uname -n` | Display the network node hostname                        |
+| `uname -r` | Display the kernel release                               |
+| `uname -v` | Display kernel version/build information                 |
+| `uname -m` | Display machine hardware architecture                    |
+| `uname -p` | Display processor type, or `unknown` if unavailable      |
+| `uname -i` | Display hardware platform, or `unknown` if unavailable   |
+| `uname -o` | Display operating-system identification, where supported |
+
 System administration tip: `uname -a` identifies the running kernel, but it does not tell you the complete Ubuntu release version or the full hardware specifications. Use `cat /etc/os-release` and `lscpu` to investigate those separately.
