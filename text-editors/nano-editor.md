@@ -61,7 +61,7 @@ sudo nano /etc/hosts
 
 When you open Nano, the screen generally contains three main areas.
 
-GNU nano — notes.txt
+GNU nano - notes.txt
 
 Welcome to Linux Nano Editor  This is my first text file. I am learning Linux administration.
 
@@ -252,10 +252,10 @@ Both are useful. Start with Nano to learn basic file editing, then consider Vim 
 
 For a beginner learning Linux and system administration, remember these five Nano commands first:
 
-- `nano filename` — open or create a file.
-- `Ctrl + O` — save.
-- `Ctrl + X` — exit.
-- `Ctrl + W` — search.
-- `Ctrl + K` — cut a line.
+- `nano filename` - open or create a file.
+- `Ctrl + O` - save.
+- `Ctrl + X` - exit.
+- `Ctrl + W` - search.
+- `Ctrl + K` - cut a line.
 
 Once you can create, edit, save, and verify a text file, you have learned the essential Nano workflow used in everyday Linux administration.
