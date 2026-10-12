@@ -41,10 +41,10 @@ Normal Mode is used to navigate through text and execute editing commands.
 
 Examples:
 
-- `h`, `j`, `k`, `l` — Navigate through text.
-- `dd` — Delete a line.
-- `yy` — Copy a line.
-- `p` — Paste text.
+- `h`, `j`, `k`, `l` - Navigate through text.
+- `dd` - Delete a line.
+- `yy` - Copy a line.
+- `p` - Paste text.
 
 Vim starts in Normal Mode. Press `i` to enter Insert Mode.
 
@@ -54,9 +54,9 @@ Insert Mode allows you to type, add, and modify text.
 
 Enter Insert Mode using:
 
-- `i` — Insert before the cursor.
-- `a` — Append after the cursor.
-- `o` — Open a new line below the current line.
+- `i` - Insert before the cursor.
+- `a` - Append after the cursor.
+- `o` - Open a new line below the current line.
 
 Press `Esc` to return to Normal Mode.
 
