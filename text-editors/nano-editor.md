@@ -245,37 +245,8 @@ Both are useful. Start with Nano to learn basic file editing, then consider Vim 
 
 ## Nano practice checklist
 
-0/5 completed
+<img width="718" height="462" alt="image" src="https://github.com/user-attachments/assets/2b7ea8f4-4f04-40f6-b61d-a5205ec827ee" />
 
-Create a file
-
-Write three lines about Linux and save the file.
-
-nano practice.txt
-
-View the contents
-
-Exit Nano and display the saved file.
-
-cat practice.txt
-
-Search for a word
-
-Press Ctrl + W and search for a word in your file.
-
-nano practice.txt
-
-Cut and paste a line
-
-Use Ctrl + K to cut a line and Ctrl + U to paste it.
-
-nano practice.txt
-
-Save and exit
-
-Practice saving your changes and returning to the terminal.
-
-Ctrl + O  →  Enter  →  Ctrl + X
 
 ## Key takeaway
 
