@@ -8,47 +8,8 @@ As a Linux system administrator, learning these types helps you investigate stor
 
 Linux filesystems commonly expose these seven types:
 
-1\. Regular file (`-`)
+<img width="399" height="447" alt="image" src="https://github.com/user-attachments/assets/f930ded0-1837-4bac-b0dd-fb5897c5e1b4" />
 
-Stores data such as text, logs, scripts, programs, images, and configuration.
-
-Examples: `/etc/hostname`, `/var/log/syslog`, `notes.txt`
-
-2\. Directory (`d`)
-
-Organizes filesystem entries and maps filenames to their associated filesystem objects.
-
-Examples: `/home`, `/etc`, `/var/log`
-
-3\. Symbolic link (`l`)
-
-Stores a pathname referring to another file or directory.
-
-Examples: `/etc/localtime` on many Linux systems, `current -> releases/v1`
-
-4\. Block device (`b`)
-
-Represents a device that provides block-oriented storage access.
-
-Examples: `/dev/sda`, `/dev/loop0` where present
-
-5\. Character device (`c`)
-
-Represents a device interface that typically handles data as a stream of bytes.
-
-Examples: `/dev/null`, `/dev/tty`, `/dev/zero`
-
-6\. Named pipe (FIFO) (`p`)
-
-Provides a filesystem-named channel for communication between processes.
-
-Example: `/tmp/my-pipe`
-
-7\. Unix domain socket (`s`)
-
-Provides local inter-process communication through a socket endpoint, often used by services and applications.
-
-Examples: `/run/docker.sock`, `/run/systemd/private` where present
 
 These symbols are the first character commonly shown by `ls -l`. Device nodes, pipes, and sockets have special behavior; they are not ordinary files that simply store document contents.
 
