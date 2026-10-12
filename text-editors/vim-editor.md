@@ -39,27 +39,8 @@ If the file exists, Vim opens it. Otherwise, you can create it by editing and sa
 
 This is the most important concept to understand before using Vim.
 
-## 1. Normal Mode
+<img width="535" height="415" alt="image" src="https://github.com/user-attachments/assets/8066e2ee-bb27-4117-98fc-e270601e181b" />
 
-Navigate through text and execute editing commands.
-
-Examples: `h`, `j`, `k`, `l`, `dd`, `yy`
-
-Press `i` to enter Insert Mode; press `Esc` to return
-
-## 2. Insert Mode
-
-Type, add, or modify text as you would in a basic text editor.
-
-Enter with `i`, `a`, or `o`
-
-Press `Esc` to return to Normal Mode
-
-## 3. Command-Line Mode
-
-Execute file operations, searches, replacements, and other commands.
-
-Enter commands beginning with `:` such as `:w`, `:q`, and `:wq`
 
 Remember: Vim starts in Normal Mode. If you want to type text, press `i`. When you finish typing, press `Esc` before executing commands such as saving or quitting.
 
