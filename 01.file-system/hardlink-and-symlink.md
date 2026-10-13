@@ -8,8 +8,7 @@ Both are useful for Linux system administration, application deployments, config
 
 A hard link is an additional name for the same underlying file data. The original filename and the hard-link filename point to the same inode.
 
-<img width="593" height="300" alt="image" src="https://github.com/user-attachments/assets/fe43bd9b-f6cb-4786-bfd3-446016409f31" />
-
+<img width="593" height="300" alt="image" src="https://github.com/user-attachments/assets/c91bbc70-5ba7-4a5e-bd94-9523fffbc104" />
 
 ### Example: Create a hard link
 
