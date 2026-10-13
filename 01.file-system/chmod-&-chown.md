@@ -28,9 +28,9 @@ The permission string `-rwxr-xr--` is divided into four parts:
 
 The three permission categories are:
 
-- Owner (`u`) — the user who owns the file.
-- Group (`g`) — users who belong to the file's associated group.
-- Others (`o`) — everyone else, subject to other access controls.
+- Owner (`u`) - the user who owns the file.
+- Group (`g`) - users who belong to the file's associated group.
+- Others (`o`) - everyone else, subject to other access controls.
 
 Permission letters:
 
@@ -43,7 +43,7 @@ Permission letters:
 
 For directories, `r` allows listing entries, `w` allows creating/removing entries when combined with appropriate execute permission, and `x` allows traversing the directory.
 
-## 2. `chmod` — Change file permissions
+## 2. `chmod` - Change file permissions
 
 `chmod` stands for change mode. It changes which read, write, and execute permissions apply to the owner, group, and others.
 
@@ -141,7 +141,7 @@ find ~/fs-lab/project -type f -exec chmod 644 {} +
 
 These are example permissions, not universal defaults. Private data and executable files may need different settings.
 
-## 3. `chown` — Change file ownership
+## 3. `chown` - Change file ownership
 
 `chown` stands for change owner. It changes the user who owns a file or directory and can also change its associated group.
 
