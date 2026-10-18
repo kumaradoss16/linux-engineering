@@ -129,6 +129,9 @@ A topic is considered learned only when you can perform the task without followi
 
 ---
 
+<img width="596" height="563" alt="image" src="https://github.com/user-attachments/assets/307018ee-a068-47ff-9148-b541037371a9" />
+
+
 # Phase 0 - Linux Lab Foundation
 
 ## Topics
