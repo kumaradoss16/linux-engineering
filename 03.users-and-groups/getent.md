@@ -1,4 +1,4 @@
-# `getent` — Basic Linux Command Tutorial
+# `getent` - Basic Linux Command Tutorial
 
 The `getent` command in Linux retrieves entries from system databases, such as users, groups, hosts, and services. It uses the system's Name Service Switch (NSS) configuration to determine where to look, including local files and configured directory services.
 
@@ -10,9 +10,9 @@ It is useful for Linux system administration, user management, group management,
 getent DATABASE [KEY]
 ```
 
-- `getent` — command to retrieve database entries.
-- `DATABASE` — the database you want to query.
-- `KEY` — optional value, such as a username or group name.
+- `getent` - command to retrieve database entries.
+- `DATABASE` - the database you want to query.
+- `KEY` - optional value, such as a username or group name.
 
 ## 2. Essential `getent` commands
 
