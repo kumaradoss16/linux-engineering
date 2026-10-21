@@ -82,13 +82,6 @@ passwd: password updated successfully
 
 Ubuntu's password-recovery guidance recommends resetting the affected user's password from the recovery root shell.&#x20;
 
-[image](https://www.google.com/s2/favicons?domain=https://help.ubuntu.com\&sz=32)
-
-Community Help Wiki
-
-+1
-
-
 
 ## Step 5: Check the account's password status
 
@@ -117,11 +110,6 @@ usermod -aG sudo developer01
 ```
 
 This adds the user to the `sudo` group without replacing existing supplementary group memberships. Ubuntu commonly uses this group to authorize administrative commands.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://ubuntu.com\&sz=32)
-
-Ubuntu Server documentation
-
 
 
 Only do this if `developer01` is intended to have administrative privileges.
