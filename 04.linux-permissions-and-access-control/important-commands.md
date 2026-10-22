@@ -47,7 +47,7 @@ sudo find /path/to/target -type f -perm 0777 -exec chmod 644 {} +
 
 ---
 
-* Finding SUID and SGID files is a standard security auditing task. These special permissions allow an executable file to run with the privileges of the file's owner (SUID) or group (SGID), rather than the user who is actually running it.
+Finding SUID and SGID files is a standard security auditing task. These special permissions allow an executable file to run with the privileges of the file's owner (SUID) or group (SGID), rather than the user who is actually running it.
 
 Because these files can temporarily grant high-level (often root) access, attackers actively look for them.
 
