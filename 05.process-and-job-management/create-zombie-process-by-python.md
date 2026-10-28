@@ -1,4 +1,4 @@
-You can create a zombie process in Linux for learning and process-management practice using a small Python or C program.
+Create a zombie process in Linux for learning and process-management practice using a small Python or C program.
 
 A zombie process is a child process that has finished execution but whose parent has not yet collected its exit status using a call such as `wait()`. Its process table entry remains until the parent reaps it.
 
