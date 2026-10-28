@@ -12,7 +12,7 @@ An orphan process in Linux is a process whose parent process has terminated whil
 
 ## 2. Create an orphan process in Ubuntu
 
-### Step 1 — Create a test script
+### Step 1 - Create a test script
 
 ```
 nano orphan.py
@@ -26,7 +26,7 @@ import osimport timepid = os.fork()if pid == 0:    # Child process    print(f"Ch
 
 Save and exit Nano: `Ctrl+O`, `Enter`, then `Ctrl+X`.
 
-### Step 2 — Run the script
+### Step 2 - Run the script
 
 ```
 python3 orphan.py
