@@ -146,7 +146,7 @@ sudo dpkg -P nginx
 
 ## 4. Practical example: Installing software using APT vs DPKG
 
-Method A — Install using APT
+Method A - Install using APT
 
 ```
 sudo apt update
@@ -155,7 +155,7 @@ sudo apt install nginx
 
 Automatic dependency resolution
 
-Method B — Install using DPKG
+Method B - Install using DPKG
 
 First, download a `.deb` package from a trusted source.
 
